@@ -29,6 +29,11 @@ import io.element.android.features.messages.impl.timeline.model.event.TimelineIt
 import io.element.android.features.messages.impl.timeline.model.event.TimelineItemVideoContent
 import io.element.android.features.messages.impl.timeline.model.event.TimelineItemVoiceContent
 import io.element.android.features.messages.impl.timeline.model.virtual.TimelineItemDaySeparatorModel
+import io.element.android.features.messages.impl.timeline.model.virtual.TimelineItemLastForwardIndicatorModel
+import io.element.android.features.messages.impl.timeline.model.virtual.TimelineItemLoadingIndicatorModel
+import io.element.android.features.messages.impl.timeline.model.virtual.TimelineItemReadMarkerModel
+import io.element.android.features.messages.impl.timeline.model.virtual.TimelineItemRoomBeginningModel
+import io.element.android.features.messages.impl.timeline.model.virtual.TimelineItemTypingNotificationModel
 import io.element.android.features.messages.impl.timeline.model.virtual.TimelineItemVirtualModel
 import io.element.android.libraries.designsystem.components.avatar.AvatarData
 import io.element.android.libraries.matrix.api.core.EventId
@@ -79,6 +84,21 @@ sealed interface TimelineItem {
         is Event -> sentDate.takeIf { it.isNotEmpty() }
         is Virtual -> (model as? TimelineItemDaySeparatorModel)?.formattedDate?.takeIf { it.isNotEmpty() }
         is GroupedEvents -> null
+    }
+
+    fun shouldAnimate(): Boolean = when (this) {
+        is Event -> true
+        is GroupedEvents -> true
+        is Virtual -> when (model) {
+            // Animate only the virtual items we verified are safe
+            is TimelineItemReadMarkerModel,
+            is TimelineItemTypingNotificationModel -> true
+            // Every other virtual item is not safe to animate
+            is TimelineItemDaySeparatorModel,
+            is TimelineItemLoadingIndicatorModel,
+            is TimelineItemRoomBeginningModel,
+            is TimelineItemLastForwardIndicatorModel -> false
+        }
     }
 
     data class Virtual(
