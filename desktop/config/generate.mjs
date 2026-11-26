@@ -22,10 +22,13 @@ const config = {
     branding,
     embedded_pages,
     default_theme,
-    setting_defaults: { ...setting_defaults, custom_themes: [light, dark] },
+    setting_defaults: {
+        ...setting_defaults,
+        custom_themes: [light, dark],
+        "UIFeature.registration": false,
+    },
     disable_custom_urls: false,
     disable_guests: true,
-    disable_registration: true,
     // Placeholder. Enter the intended Matrix homeserver on the sign-in screen.
     default_server_config: {
         "m.homeserver": { base_url: "https://matrix.example" },

@@ -15,7 +15,7 @@ assert.deepEqual(
     [["OKO світла", false], ["OKO темна", true]],
 );
 assert.equal(config.disable_guests, true);
-assert.equal(config.disable_registration, true);
+assert.equal(config.setting_defaults["UIFeature.registration"], false);
 assert.equal(config.disable_custom_urls, false);
 assert.equal(Object.hasOwn(config, "update_base_url"), false);
 

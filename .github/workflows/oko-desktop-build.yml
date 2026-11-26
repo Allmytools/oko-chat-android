@@ -75,7 +75,7 @@ jobs:
           if (-not (Get-Command gpg -ErrorAction SilentlyContinue)) {
             $env:PATH = "C:\Program Files\Git\usr\bin;$env:PATH"
           }
-          $env:GNUPGHOME = Join-Path $env:RUNNER_TEMP oko-desktop-gnupg
+          $env:GNUPGHOME = 'oko-desktop-gnupg'
           New-Item $env:GNUPGHOME -ItemType Directory | Out-Null
           $config = Join-Path $env:RUNNER_TEMP oko-desktop-config
           node "$env:GITHUB_WORKSPACE/desktop/config/generate.mjs" $config
