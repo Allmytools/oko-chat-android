@@ -24,3 +24,12 @@
 Щоб зібрати лише шар 1, прибрати зі своєї гілки записи `bgActionPrimary*` з копії палітри,
 відновити два гетери бульбашок і два посилання на прозору заставку з нового тегу Element.
 Ресурси OKO можна залишити в дереві. Перед здачею повторити `oko-build`.
+
+## Перевірка і процес
+
+| Файл | Рядки / зміна | Зона та зміни Element за рік | Перевірка |
+|---|---|---|---|
+| `features/enterprise/impl-foss/…/OkoPaletteTest.kt` | Контраст і збереження еталонної палітри | Новий файл, 0 | `:features:enterprise:impl-foss:testDebugUnitTest` |
+| `features/oko-brand-screenshots/` | Окремий Gradle-модуль та знімки Compose обох тем | Нові файли, 0 | `:features:oko-brand-screenshots:recordPaparazziDebug`, після появи еталонів — `verifyPaparazziDebug` |
+| `.github/workflows/oko-build.yml` | FOSS APK, тести, знімки й підпис тестового артефакту | Новий файл, 0 | Actions, `oko-build` |
+| `docs/oko/zvity/ZVIT_CHA1.md` | Збірка, умови тестування й контраст для власника | Новий файл, 0 | Узгодити з артефактами Actions |
