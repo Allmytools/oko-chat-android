@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- OKO: TEMP adaptive icon. -->
+<!-- OKO: Approved adaptive icon. -->
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
     <background android:drawable="@color/oko_launcher_background"/>
     <foreground android:drawable="@drawable/oko_launcher_wordmark"/>
-    <monochrome android:drawable="@drawable/oko_launcher_wordmark"/>
+    <monochrome android:drawable="@mipmap/oko_launcher_monochrome"/>
 </adaptive-icon>

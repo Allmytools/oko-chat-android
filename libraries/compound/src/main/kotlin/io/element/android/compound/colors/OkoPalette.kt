@@ -7,7 +7,7 @@ package io.element.android.compound.colors
 import androidx.compose.ui.graphics.Color
 import io.element.android.compound.tokens.generated.SemanticColors
 
-/** TEMP colors from branding/oko/brand.json. */
+/** Approved colors from branding/oko/paket_android/brand.json. */
 object OkoPalette {
     private val lightAccent = Color(0xFF008069)
     private val darkAccent = Color(0xFF21C063)
@@ -15,47 +15,43 @@ object OkoPalette {
     fun branded(upstream: SemanticColorsLightDark) = SemanticColorsLightDark(
         light = upstream.light.copy(
             bgAccentRest = lightAccent,
-            bgAccentHovered = Color(0xFF006E5A),
-            bgAccentPressed = Color(0xFF005C4A),
-            bgAccentSelected = Color(0x1F008069),
-            bgAccentSubtle = Color(0xFFEFFAF5),
-            bgBadgeAccent = Color(0xFFCAEFDE),
-            textBadgeAccent = Color(0xFF005C4A),
+            bgAccentHovered = Color(0xFF00715D),
+            bgAccentPressed = Color(0xFF006352),
+            bgAccentSubtle = Color(0xFFEEF8F5),
+            bgBadgeAccent = Color(0xFFC9EDE4),
+            textBadgeAccent = Color(0xFF005C4B),
             borderAccentPrimary = Color(0xFF008069),
-            borderAccentSubtle = Color(0xFF34937D),
-            gradientActionStop1 = Color(0xFFA7E4CA),
-            gradientActionStop2 = Color(0xFF5BC59C),
+            borderAccentSubtle = Color(0xFF2FB394),
+            gradientActionStop1 = Color(0xFF8FD6C4),
+            gradientActionStop2 = Color(0xFF2E9E86),
             gradientActionStop3 = Color(0xFF008069),
-            gradientActionStop4 = Color(0xFF005C4A),
+            gradientActionStop4 = Color(0xFF005C4B),
             iconAccentPrimary = Color(0xFF008069),
-            iconAccentTertiary = Color(0xFF298876),
+            iconAccentTertiary = Color(0xFF009B7E),
             textActionAccent = Color(0xFF008069),
             bgActionPrimaryRest = Color(0xFF008069),
-            bgActionPrimaryHovered = Color(0xFF006E5A),
-            bgActionPrimaryPressed = Color(0xFF005C4A),
-            bgActionPrimaryDisabled = Color(0xFFA6ADB7),
+            bgActionPrimaryHovered = Color(0xFF00715D),
+            bgActionPrimaryPressed = Color(0xFF006352),
         ),
         dark = upstream.dark.copy(
             bgAccentRest = darkAccent,
-            bgAccentHovered = Color(0xFF44CF7D),
-            bgAccentPressed = Color(0xFF61DB91),
-            bgAccentSelected = Color(0x3321C063),
-            bgAccentSubtle = Color(0xFF09251A),
-            bgBadgeAccent = Color(0xFF153B2B),
-            textBadgeAccent = Color(0xFF61DB91),
+            bgAccentHovered = Color(0xFF3CCB78),
+            bgAccentPressed = Color(0xFF5BD48D),
+            bgAccentSubtle = Color(0xFF04200F),
+            bgBadgeAccent = Color(0xFF0F3A22),
+            textBadgeAccent = Color(0xFF5BD48D),
             borderAccentPrimary = Color(0xFF21C063),
-            borderAccentSubtle = Color(0xFF34966A),
-            gradientActionStop1 = Color(0xFF61DB91),
-            gradientActionStop2 = Color(0xFF34CA79),
-            gradientActionStop3 = Color(0xFF149859),
-            gradientActionStop4 = Color(0xFF125738),
+            borderAccentSubtle = Color(0xFF146B3A),
+            gradientActionStop1 = Color(0xFF5BD48D),
+            gradientActionStop2 = Color(0xFF21C063),
+            gradientActionStop3 = Color(0xFF168A46),
+            gradientActionStop4 = Color(0xFF0B4A26),
             iconAccentPrimary = Color(0xFF21C063),
-            iconAccentTertiary = Color(0xFF3A9C6D),
+            iconAccentTertiary = Color(0xFF1A9A4F),
             textActionAccent = Color(0xFF21C063),
             bgActionPrimaryRest = Color(0xFF21C063),
-            bgActionPrimaryHovered = Color(0xFF44CF7D),
-            bgActionPrimaryPressed = Color(0xFF61DB91),
-            bgActionPrimaryDisabled = Color(0xFF4A4F55),
+            bgActionPrimaryHovered = Color(0xFF3CCB78),
+            bgActionPrimaryPressed = Color(0xFF5BD48D),
         ),
     )
 
@@ -63,9 +59,9 @@ object OkoPalette {
     fun bubbleBackground(colors: SemanticColors, fromMe: Boolean): Color? {
         if (colors.bgAccentRest != (if (colors.isLight) lightAccent else darkAccent)) return null
         return if (colors.isLight) {
-            if (fromMe) Color(0xFFECF8F2) else Color(0xFFF2F5F6)
+            if (fromMe) Color(0xFFD9FDD3) else null
         } else {
-            if (fromMe) Color(0xFF0A1A14) else Color(0xFF171B20)
+            if (fromMe) Color(0xFF173A2C) else Color(0xFF21282C)
         }
     }
 }

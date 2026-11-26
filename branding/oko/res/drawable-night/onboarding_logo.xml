@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- OKO: TEMP brand artwork. -->
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="200dp" android:height="200dp"
-    android:viewportWidth="108" android:viewportHeight="108">
-    <path android:fillColor="#21C063" android:fillType="evenOdd" android:pathData="M34,44a10,10 0,1 0,0 20a10,10 0,1 0,0 -20z M34,49a5,5 0,1 1,0 10a5,5 0,1 1,0 -10z M47,44h5v8l7,-8h6l-8,9l9,11h-6l-8,-9v9h-5z M74,44a10,10 0,1 0,0 20a10,10 0,1 0,0 -20z M74,49a5,5 0,1 1,0 10a5,5 0,1 1,0 -10z"/>
-</vector>
