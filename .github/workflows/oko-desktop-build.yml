@@ -126,3 +126,17 @@ jobs:
           name: oko-desktop-windows-test
           path: ${{ runner.temp }}/oko-desktop-windows-test/
           if-no-files-found: error
+
+      - name: Capture branded login, home and chat
+        id: screenshots
+        continue-on-error: true
+        working-directory: element-web/apps/desktop
+        run: |
+          pnpm exec node "$env:GITHUB_WORKSPACE/desktop/screenshots/capture.mjs" packaged-web "$env:RUNNER_TEMP/oko-desktop-screenshots"
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: steps.screenshots.outcome == 'success'
+        with:
+          name: oko-desktop-screenshots
+          path: ${{ runner.temp }}/oko-desktop-screenshots/
+          if-no-files-found: error
