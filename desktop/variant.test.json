@@ -1,0 +1,7 @@
+{
+  "appId": "com.interatletika.oko.desktop.test",
+  "productName": "OKO test",
+  "name": "oko-desktop-test",
+  "description": "Тестова версія чату OKO для Windows",
+  "protocols": ["oko-test"]
+}

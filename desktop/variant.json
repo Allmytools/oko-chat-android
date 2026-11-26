@@ -1,0 +1,7 @@
+{
+  "appId": "com.interatletika.oko.desktop",
+  "productName": "OKO",
+  "name": "oko-desktop",
+  "description": "Чат OKO для Windows",
+  "protocols": ["oko"]
+}
