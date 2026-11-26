@@ -1,0 +1,64 @@
+{
+  "status": "TEMP",
+  "app_name": "OKO",
+  "notification_accent": "#008069",
+  "light": {
+    "bgAccentRest": "#008069",
+    "bgAccentHovered": "#006E5A",
+    "bgAccentPressed": "#005C4A",
+    "bgAccentSelected": "#1F008069",
+    "bgAccentSubtle": "#EFFAF5",
+    "bgBadgeAccent": "#CAEFDE",
+    "textBadgeAccent": "#005C4A",
+    "borderAccentPrimary": "#008069",
+    "borderAccentSubtle": "#34937D",
+    "gradientActionStop1": "#A7E4CA",
+    "gradientActionStop2": "#5BC59C",
+    "gradientActionStop3": "#008069",
+    "gradientActionStop4": "#005C4A",
+    "iconAccentPrimary": "#008069",
+    "iconAccentTertiary": "#298876",
+    "textActionAccent": "#008069",
+    "bgActionPrimaryRest": "#008069",
+    "bgActionPrimaryHovered": "#006E5A",
+    "bgActionPrimaryPressed": "#005C4A",
+    "bgActionPrimaryDisabled": "#A6ADB7"
+  },
+  "dark": {
+    "bgAccentRest": "#21C063",
+    "bgAccentHovered": "#44CF7D",
+    "bgAccentPressed": "#61DB91",
+    "bgAccentSelected": "#3321C063",
+    "bgAccentSubtle": "#09251A",
+    "bgBadgeAccent": "#153B2B",
+    "textBadgeAccent": "#61DB91",
+    "borderAccentPrimary": "#21C063",
+    "borderAccentSubtle": "#34966A",
+    "gradientActionStop1": "#61DB91",
+    "gradientActionStop2": "#34CA79",
+    "gradientActionStop3": "#149859",
+    "gradientActionStop4": "#125738",
+    "iconAccentPrimary": "#21C063",
+    "iconAccentTertiary": "#3A9C6D",
+    "textActionAccent": "#21C063",
+    "bgActionPrimaryRest": "#21C063",
+    "bgActionPrimaryHovered": "#44CF7D",
+    "bgActionPrimaryPressed": "#61DB91",
+    "bgActionPrimaryDisabled": "#4A4F55"
+  },
+  "message_bubbles": {
+    "light": {
+      "fromMe": "#ECF8F2",
+      "fromOther": "#F2F5F6"
+    },
+    "dark": {
+      "fromMe": "#0A1A14",
+      "fromOther": "#171B20"
+    }
+  },
+  "yellow_zone_approved": [
+    "bgActionPrimary*",
+    "message_bubbles",
+    "oko_splash"
+  ]
+}

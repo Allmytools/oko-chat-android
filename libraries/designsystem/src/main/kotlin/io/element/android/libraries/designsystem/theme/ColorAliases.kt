@@ -11,6 +11,7 @@ package io.element.android.libraries.designsystem.theme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import io.element.android.compound.annotations.CoreColorToken
+import io.element.android.compound.colors.OkoPalette // OKO: Brand-only bubble colors.
 import io.element.android.compound.previews.ColorListPreview
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.compound.tokens.generated.SemanticColors
@@ -38,12 +39,14 @@ val SemanticColors.placeholderBackground
 // This color is not present in Semantic color, so put hard-coded value for now
 @OptIn(CoreColorToken::class)
 val SemanticColors.messageFromMeBackground
-    get() = if (isLight) LightColorTokens.colorGray400 else DarkColorTokens.colorGray500
+    get() = OkoPalette.bubbleBackground(this, fromMe = true) // OKO: Keep the Element preview fallback.
+        ?: if (isLight) LightColorTokens.colorGray400 else DarkColorTokens.colorGray500
 
 // This color is not present in Semantic color, so put hard-coded value for now
 @OptIn(CoreColorToken::class)
 val SemanticColors.messageFromOtherBackground
-    get() = if (isLight) LightColorTokens.colorGray300 else DarkColorTokens.colorGray400
+    get() = OkoPalette.bubbleBackground(this, fromMe = false) // OKO: Keep the Element preview fallback.
+        ?: if (isLight) LightColorTokens.colorGray300 else DarkColorTokens.colorGray400
 
 // This color is not present in Semantic color, so put hard-coded value for now
 @OptIn(CoreColorToken::class)
