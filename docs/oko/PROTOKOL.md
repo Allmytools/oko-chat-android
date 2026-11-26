@@ -67,3 +67,5 @@
 - **26.11.2026 18:17 · Codex.** Виправлено шлях до окремого сховища GPG під Windows після помилки `gpg: no writable keyring found: Not found`. Вимкнення реєстрації через підтримуваний у цій версії параметр `UIFeature.registration`.
 
 - **26.11.2026 18:24 · Codex.** Е3–Е4: перша зелена збірка на `744b1a15` ([запуск](https://github.com/Allmytools/oko-chat-android/actions/runs/45857354077)). Додано сценарій знімків і звіт `docs/oko/zvity/ZVIT_CHA2.md`. Локально перевірено шість знімків 1920×1080 у Chromium з вигаданими даними.
+
+- **26.11.2026 18:29 · Codex · ПЕРЕВІР ЧА2.** `oko-desktop-build` на `a17cdb4c` зелений: інсталятор Windows x64, контрольна сума й шість знімків у [GitHub Actions](https://github.com/Allmytools/oko-chat-android/actions/runs/45858698468). Фінальний коміт додає інструкцію й запис протоколу, а повторний прогін перевіряє його. [PR №2](https://github.com/Allmytools/oko-chat-android/pull/2) — чернетка для інтегратора.
