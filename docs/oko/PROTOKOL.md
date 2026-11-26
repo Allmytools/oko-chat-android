@@ -30,3 +30,15 @@
   `sonar`, `tests` (Codecov), `quality` (enterprise), `triage-incoming` і `triage-labelled`
   (бот Element), `pull_request` і `pr-checks` (автоматизація PR Element), `release` (сервіси/ключі Element) і
   `stale-issues` (нічний тріаж). Перелік для власника; стан вимкнення у GitHub поки не підтверджено.
+- **26.11.2026 07:41 · Виконавець.** Е2: FOSS release за замовчуванням має `com.interatletika.oko.test` і назву «OKO test»;
+  `-Poko.test=false` вибирає `com.interatletika.oko`. Власні схеми OAuth розрізняють версії; вхід через MAS
+  потрібно перевірити на APK із затвердженим Matrix-сервером. Порожня `OKO_HOMESERVER` залишає вибір сервера.
+  Для прив'язки після погодження вписати Matrix server name (домен, який бачить користувач) у цю константу
+  в `OkoEnterpriseService.kt` і перевірити вхід на дозволеному та сторонньому серверах.
+  Робочий ключ створює власник/IT локально:
+  `keytool -genkeypair -keystore oko-release.p12 -storetype PKCS12 -alias oko-release -keyalg RSA -keysize 3072 -validity 10000`.
+  Паролі вводити у запрошеннях `keytool`. Зберегти дві зашифровані резервні копії сховища та відбиток сертифіката;
+  Base64 сховища й паролі покласти тільки в GitHub Actions secrets `OKO_SIGNING_STORE_BASE64`,
+  `OKO_SIGNING_STORE_PASSWORD`, `OKO_SIGNING_KEY_ALIAS`, `OKO_SIGNING_KEY_PASSWORD`.
+  Для `.test` використати окреме сховище й окремі секрети з префіксом `OKO_TEST_SIGNING_`; ключі між версіями
+  не взаємозамінні. Секрети не додавати до репозиторію або повідомлень.
