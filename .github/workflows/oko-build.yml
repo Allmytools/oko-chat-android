@@ -28,7 +28,7 @@ jobs:
           submodules: false
       - uses: ./.github/actions/setup-build
         with:
-          gradle-cache-read-only: 'true'
+          gradle-cache-read-only: ${{ github.event_name != 'push' || github.ref != 'refs/heads/ai/oko-brand' }}
       - uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
         with:
           log-accepted-android-sdk-licenses: 'false'
@@ -43,6 +43,7 @@ jobs:
         run: |
           tools="$ANDROID_HOME/build-tools/37.0.0"
           shopt -s nullglob
+          mkdir -p "$RUNNER_TEMP/oko-unsigned-apks"
           for abi in universal arm64-v8a; do
             apks=(app/build/outputs/apk/fdroid/release/*-"$abi"-*.apk)
             if [[ ${#apks[@]} -ne 1 ]]; then
@@ -52,6 +53,7 @@ jobs:
             "$tools/aapt" dump badging "${apks[0]}" > "$RUNNER_TEMP/oko-test-badging.txt"
             grep -Eq "^package: name='com\.interatletika\.oko\.test' " "$RUNNER_TEMP/oko-test-badging.txt"
             grep -Fx "application-label:'OKO test'" "$RUNNER_TEMP/oko-test-badging.txt"
+            cp -- "${apks[0]}" "$RUNNER_TEMP/oko-unsigned-apks/oko-test-$abi-unsigned.apk"
           done
       - name: Render or verify OKO screenshots
         shell: bash
@@ -64,6 +66,12 @@ jobs:
             task=recordPaparazziDebug
           fi
           ./gradlew -Pelement.enterprise=false ":features:oko-brand-screenshots:$task"
+          for theme in Light Dark; do
+            if [[ -z "$(find "$snapshots" -name "*Oko${theme}Screenshots*.png" -type f -size +0c -print -quit)" ]]; then
+              echo "::error::Paparazzi did not produce the ${theme,,} OKO screenshots."
+              exit 1
+            fi
+          done
       - name: Upload OKO screenshot results
         if: always() && !cancelled()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -98,17 +106,12 @@ jobs:
           printf '%s' "$OKO_TEST_SIGNING_STORE_BASE64" | base64 --decode > "$store"
           tools="$ANDROID_HOME/build-tools/37.0.0"
           mkdir -p "$RUNNER_TEMP/oko-apks"
-          shopt -s nullglob
           for abi in universal arm64-v8a; do
-            apks=(app/build/outputs/apk/fdroid/release/*-"$abi"-*.apk)
-            if [[ ${#apks[@]} -ne 1 ]]; then
-              echo "::error::Expected exactly one F-Droid APK for $abi, found ${#apks[@]}."
-              exit 1
-            fi
+            apk="$RUNNER_TEMP/oko-unsigned-apks/oko-test-$abi-unsigned.apk"
             output="$RUNNER_TEMP/oko-apks/oko-test-$abi.apk"
             "$tools/apksigner" sign --ks "$store" --ks-type PKCS12 --ks-key-alias "$OKO_TEST_SIGNING_KEY_ALIAS" \
               --ks-pass env:OKO_TEST_SIGNING_STORE_PASSWORD --key-pass env:OKO_TEST_SIGNING_KEY_PASSWORD \
-              --out "$output" "${apks[0]}"
+              --out "$output" "$apk"
             "$tools/apksigner" verify "$output"
           done
           echo 'signed=true' >> "$GITHUB_OUTPUT"
@@ -118,4 +121,11 @@ jobs:
         with:
           name: oko-test-apks
           path: ${{ runner.temp }}/oko-apks/
+          if-no-files-found: error
+      - name: Upload unsigned OKO test APKs
+        if: steps.sign.outputs.signed != 'true'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: oko-test-apks-unsigned
+          path: ${{ runner.temp }}/oko-unsigned-apks/
           if-no-files-found: error

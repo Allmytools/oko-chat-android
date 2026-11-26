@@ -9,9 +9,14 @@ plugins {
 
 android {
     namespace = "io.element.android.oko.screenshot"
-    sourceSets.getByName("main").res.apply {
-        srcDir(rootDir.resolve("appicon/oko/src/main/res"))
-        srcDir(rootDir.resolve("branding/oko/res"))
+}
+
+androidComponents {
+    finalizeDsl { extension ->
+        extension.sourceSets.getByName("main").res.directories.apply {
+            add(rootDir.resolve("appicon/oko/src/main/res").path)
+            add(rootDir.resolve("branding/oko/res").path)
+        }
     }
 }
 

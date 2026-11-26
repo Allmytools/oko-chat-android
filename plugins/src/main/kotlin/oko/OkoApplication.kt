@@ -17,8 +17,8 @@ fun ApplicationAndroidComponentsExtension.configureOkoApplication(project: Proje
     val isTestRelease = project.providers.gradleProperty("oko.test").orElse("true").get().toBooleanStrict()
     finalizeDsl {
         it.sourceSets.getByName("main").res.apply {
-            srcDir(root.resolve("appicon/oko/src/main/res"))
-            srcDir(root.resolve("branding/oko/res"))
+            directories.add(root.resolve("appicon/oko/src/main/res").path)
+            directories.add(root.resolve("branding/oko/res").path)
         }
         it.defaultConfig.applicationId = OKO_APPLICATION_ID
         it.buildTypes.getByName("debug").apply {

@@ -19,7 +19,8 @@
 `-Pelement.enterprise=false` примусово обирає відкриті модулі. Підмодуль `enterprise` збірка `oko-build` не завантажує.
 `-Poko.test=true` є типовим для release. Для робочої версії `-Poko.test=false` обирає `com.interatletika.oko`.
 Збирання release створює APK без підпису. Після тестів Actions підписує лише тестові APK, окремими секретами
-`OKO_TEST_SIGNING_*` на push у `ai/oko-brand`. Якщо секрети відсутні, підписаний артефакт не з'явиться.
+`OKO_TEST_SIGNING_*` на push у `ai/oko-brand`. За відсутності тестових секретів `oko-test-apks-unsigned` містить обидва перевірені APK без підпису.
+Android встановлює APK лише після підпису. Робочий ключ для цього прогону не потрібен.
 
 ```sh
 ./gradlew -Pelement.enterprise=false -Poko.test=true \
@@ -34,11 +35,16 @@
 Конфігурація чернетки випуску після появи підписаних APK: `v26.11.1-oko.1-test`, назва «OKO 26.11.1 · тест 1»,
 `Draft` + `Pre-release`, ціль — перевірений SHA, вкладення — universal та arm64-v8a. Публікацію погоджує власник.
 
+Локально цільовий прогін `:features:enterprise:impl-foss:testDebugUnitTest` дав 16 із 16. Статус артефактів
+і повного прогону наведено в [PR №1](https://github.com/Allmytools/oko-chat-android/pull/1).
+
 ## Зміни та контраст
 
 Див. [OKO_PATCHES.md](../../../OKO_PATCHES.md). Заміна binding Metro делегує штатному FOSS-сервісу і тримає його часто
 змінюваний файл поза правками. Джерела ресурсів у convention-плагіні дозволяють підтягувати модуль значків Element
 у залежностях під час оновлень і підставляти значок OKO під час злиття ресурсів FOSS-застосунку.
+Після отримання пакета дизайну поміняй TEMP-ресурси, синхронізуй допустимі токени `brand.json` з `OkoPalette.kt`
+і світлий акцент сповіщень, потім повтори тести. Gradle не генерує Kotlin з `brand.json`.
 
 | Перевірка TEMP | Світла | Темна | Поріг |
 |---|---:|---:|---:|
