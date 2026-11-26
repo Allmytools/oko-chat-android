@@ -62,6 +62,8 @@ async function serveMatrixFixture(route, url) {
     if (url.pathname.includes("/receipt/")) return reply({});
 
     switch (endpoint) {
+        case "auth_metadata":
+            return route.fulfill({ headers, status: 404, json: { errcode: "M_UNRECOGNIZED", error: "No OIDC" } });
         case "versions": return reply({ versions: ["v1.11", "v1.12"], unstable_features: {} });
         case "login": return reply({ flows: [{ type: "m.login.password" }] });
         case "whoami": return reply({ user_id: account, device_id: "DEMO", is_guest: false });
@@ -136,6 +138,8 @@ try {
         try {
             await page.goto(webOrigin + "/#/login");
             await expect(page.getByRole("heading", { name: "Sign in" })).toBeVisible({ timeout: 20000 });
+            await expect(page.getByRole("button", { name: "Sign in", exact: true })).toBeEnabled();
+            await expect(page.getByText("Your OKO is misconfigured", { exact: true })).toBeHidden();
             await expect(page.locator('img[src="themes/oko/login/logo.svg"]')).toBeVisible();
             await expect(page.getByRole("link", { name: "Create account" })).toHaveCount(0);
             const actualAccent = await page.locator("body").evaluate((body) =>
@@ -156,6 +160,8 @@ try {
             const dismiss = page.getByRole("alert").getByRole("button", { name: /^ok$/i }).first();
             await dismiss.click({ timeout: 1500 }).catch(() => {});
             await dismiss.click({ timeout: 1500 }).catch(() => {});
+            const verificationNudge = page.getByRole("alert").filter({ hasText: "Verify this device" });
+            await verificationNudge.getByRole("button", { name: "Later", exact: true }).click({ timeout: 1500 }).catch(() => {});
             await page.screenshot({ path: join(output, "home-" + colorScheme + ".png"), animations: "disabled" });
 
             await page.evaluate((id) => { location.hash = "/room/" + id; }, roomId);
