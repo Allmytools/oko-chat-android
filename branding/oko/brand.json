@@ -1,0 +1,90 @@
+{
+  "app_name": "OKO",
+  "notification_accent": "#008069",
+  "light": {
+    "bgAccentRest": "#008069",
+    "bgAccentHovered": "#00715D",
+    "bgAccentPressed": "#006352",
+    "bgAccentSubtle": "#EEF8F5",
+    "bgBadgeAccent": "#C9EDE4",
+    "textBadgeAccent": "#005C4B",
+    "borderAccentPrimary": "#008069",
+    "borderAccentSubtle": "#2FB394",
+    "gradientActionStop1": "#8FD6C4",
+    "gradientActionStop2": "#2E9E86",
+    "gradientActionStop3": "#008069",
+    "gradientActionStop4": "#005C4B",
+    "iconAccentPrimary": "#008069",
+    "iconAccentTertiary": "#009B7E",
+    "textActionAccent": "#008069"
+  },
+  "dark": {
+    "bgAccentRest": "#21C063",
+    "bgAccentHovered": "#3CCB78",
+    "bgAccentPressed": "#5BD48D",
+    "bgAccentSubtle": "#04200F",
+    "bgBadgeAccent": "#0F3A22",
+    "textBadgeAccent": "#5BD48D",
+    "borderAccentPrimary": "#21C063",
+    "borderAccentSubtle": "#146B3A",
+    "gradientActionStop1": "#5BD48D",
+    "gradientActionStop2": "#21C063",
+    "gradientActionStop3": "#168A46",
+    "gradientActionStop4": "#0B4A26",
+    "iconAccentPrimary": "#21C063",
+    "iconAccentTertiary": "#1A9A4F",
+    "textActionAccent": "#21C063"
+  },
+  "yellow_zone": {
+    "bgActionPrimary": {
+      "status": "погоджено інтегратором 25.11.2026 (завдання ЧА1, шар 2)",
+      "light": {
+        "bgActionPrimaryRest": "#008069",
+        "bgActionPrimaryHovered": "#00715D",
+        "bgActionPrimaryPressed": "#006352"
+      },
+      "dark": {
+        "bgActionPrimaryRest": "#21C063",
+        "bgActionPrimaryHovered": "#3CCB78",
+        "bgActionPrimaryPressed": "#5BD48D"
+      },
+      "note": "bgActionPrimaryDisabled не змінюємо (значення Element)"
+    },
+    "message_bubbles": {
+      "status": "погоджено інтегратором 25.11.2026 (завдання ЧА1, шар 2)",
+      "file": "libraries/designsystem/…/theme/ColorAliases.kt",
+      "light": {
+        "messageFromMeBackground": "#D9FDD3"
+      },
+      "dark": {
+        "messageFromMeBackground": "#173A2C",
+        "messageFromOtherBackground": "#21282C"
+      },
+      "note": "світла messageFromOtherBackground — НЕ змінювати (біле на білому фоні зникне); темна messageFromMeBackground змінено #144D37 → #173A2C (рішення власника 26.11.2026 за порадою інтегратора: час #808994 — 3,53 : 1, як у самого Element 3,48)"
+    },
+    "splash_icon": {
+      "status": "погоджено інтегратором 25.11.2026",
+      "files": {
+        "drawable/oko_splash": "splash/oko_splash_light.svg",
+        "drawable-night/oko_splash": "splash/oko_splash_dark.svg"
+      },
+      "where": "values/themes.xml і values-night/themes.xml: windowSplashScreenAnimatedIcon = @drawable/oko_splash (замість @drawable/transparent)",
+      "spec": "вектор 240×240 dp, знак у центральному колі Ø160 dp (коло знака Ø156 dp), фон прозорий; фон заставки — колір теми (#FFFFFF / #101317)",
+      "note": "світла й темна версії однакові: зелене коло знака добре видно на обох фонах"
+    },
+    "top_bar_title": {
+      "status": "НІ на цьому етапі (рішення інтегратора 25.11.2026)",
+      "note": "лишається «Бесіди»; HomeTopBar.kt ~22 зміни/рік"
+    }
+  },
+  "unchanged_tokens": "усі інші токени Element (зокрема bgAccentSelected, *Success*, textLinkExternal, borderFocused, фон, текст)",
+  "icon_variant": "B4 «око + бульбашка», затверджено власником 25.11.2026",
+  "token_notes": {
+    "selected_filter": "bgActionPrimaryRest + textOnSolidPrimary — суцільний колір бренду разом з кнопками (погоджено)",
+    "composer_plus": "iconPrimary — не змінюється (чорна/біла)",
+    "unread_counter": "iconAccentPrimary — зелений автоматично",
+    "voice_waveform": "iconQuaternary/iconSecondary — сірі; курсор відтворення iconAccentTertiary — зелений",
+    "voice_record_button": "bgActionPrimaryRest — колір бренду разом з кнопками",
+    "source": "інтегратор, звірено з кодом Element X v26.11.1"
+  }
+}

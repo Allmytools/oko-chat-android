@@ -15,6 +15,7 @@ import extension.configureTestComponents
 import extension.composeAppConfig
 import extension.composeDependencies
 import extension.setupKover
+import oko.configureOkoApplication // OKO: Keep fork build settings in their own file.
 import org.gradle.accessors.dm.LibrariesForLibs
 
 val libs = the<LibrariesForLibs>()
@@ -33,6 +34,7 @@ android {
 }
 
 androidComponents {
+    configureOkoApplication(project) // OKO: Apply the brand to the final app DSL.
     beforeVariants { variantBuilder ->
         configureTestComponents(variantBuilder)
     }

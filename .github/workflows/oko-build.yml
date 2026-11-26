@@ -1,0 +1,114 @@
+name: oko-build
+
+on:
+  push:
+    branches: [ai/oko-brand, oko/main]
+  pull_request:
+    branches: [oko/main]
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      checkout_ref:
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  test-apk:
+    if: github.repository == 'Allmytools/oko-chat-android'
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    env:
+      OKO_BUILD_TEST: 'true'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.checkout_ref || github.sha }}
+          persist-credentials: false
+          submodules: false
+      - uses: ./.github/actions/setup-build
+        with:
+          gradle-cache-read-only: ${{ github.event_name != 'push' || github.ref != 'refs/heads/ai/oko-brand' }}
+      - uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
+        with:
+          log-accepted-android-sdk-licenses: 'false'
+          packages: 'platforms;android-37.0 build-tools;37.0.0'
+      - name: Build F-Droid APKs and run unit tests
+        run: |
+          ./gradlew -Pelement.enterprise=false "-Poko.test=$OKO_BUILD_TEST" \
+            :app:assembleFdroidRelease :app:testFdroidDebugUnitTest \
+            :features:enterprise:impl-foss:testDebugUnitTest
+      - name: Verify test APK variants
+        shell: bash
+        run: |
+          tools="$ANDROID_HOME/build-tools/37.0.0"
+          shopt -s nullglob
+          mkdir -p "$RUNNER_TEMP/oko-unsigned-apks"
+          for abi in universal arm64-v8a; do
+            apks=(app/build/outputs/apk/fdroid/release/*-"$abi"-*.apk)
+            if [[ ${#apks[@]} -ne 1 ]]; then
+              echo "::error::Expected exactly one F-Droid APK for $abi, found ${#apks[@]}."
+              exit 1
+            fi
+            "$tools/aapt" dump badging "${apks[0]}" > "$RUNNER_TEMP/oko-test-badging.txt"
+            grep -Eq "^package: name='com\.interatletika\.oko\.test' " "$RUNNER_TEMP/oko-test-badging.txt"
+            grep -Fx "application-label:'OKO test'" "$RUNNER_TEMP/oko-test-badging.txt"
+            cp -- "${apks[0]}" "$RUNNER_TEMP/oko-unsigned-apks/oko-test-$abi-unsigned.apk"
+          done
+      - name: Render or verify OKO screenshots
+        shell: bash
+        run: |
+          snapshots=features/oko-brand-screenshots/src/test/snapshots/images
+          if [[ -n "$(git ls-files "$snapshots")" ]]; then
+            git lfs pull --include="$snapshots/**"
+            task=verifyPaparazziDebug
+          else
+            task=recordPaparazziDebug
+          fi
+          ./gradlew --stop
+          ./gradlew --no-daemon --no-configuration-cache --max-workers=2 \
+            '-Dorg.gradle.jvmargs=-Xmx3g -Dfile.encoding=UTF-8 -XX:+UseG1GC' \
+            -Pelement.enterprise=false ":features:oko-brand-screenshots:$task"
+          for theme in Light Dark; do
+            frames=$(find "$snapshots" -name "*Oko${theme}Screenshots*.png" -type f -size +0c | wc -l)
+            if [[ "$frames" -lt 5 ]]; then
+              echo "::error::Expected five ${theme,,} OKO screenshots, found $frames."
+              exit 1
+            fi
+          done
+      - name: Upload OKO screenshot results
+        if: always() && !cancelled()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: oko-brand-screenshots
+          path: |
+            features/oko-brand-screenshots/src/test/snapshots/images/
+            features/oko-brand-screenshots/build/reports/paparazzi/
+            features/oko-brand-screenshots/build/paparazzi/failures/
+          if-no-files-found: ignore
+      - name: Sign test APKs
+        id: sign
+        if: github.event_name == 'push' && github.ref == 'refs/heads/ai/oko-brand' && inputs.checkout_ref == ''
+        shell: bash
+        env:
+          OKO_TEST_SIGNING_STORE_BASE64: ${{ secrets.OKO_TEST_SIGNING_STORE_BASE64 }}
+          OKO_TEST_SIGNING_STORE_PASSWORD: ${{ secrets.OKO_TEST_SIGNING_STORE_PASSWORD }}
+          OKO_TEST_SIGNING_KEY_ALIAS: ${{ secrets.OKO_TEST_SIGNING_KEY_ALIAS }}
+          OKO_TEST_SIGNING_KEY_PASSWORD: ${{ secrets.OKO_TEST_SIGNING_KEY_PASSWORD }}
+        run: bash .github/workflows/scripts/sign-oko-test-apks.sh
+      - name: Upload signed OKO test APKs
+        if: steps.sign.outputs.artifact != ''
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ${{ steps.sign.outputs.artifact }}
+          path: ${{ runner.temp }}/oko-apks/
+          if-no-files-found: error
+      - name: Upload unsigned OKO test APKs
+        if: steps.sign.outputs.artifact == ''
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: oko-test-apks-unsigned
+          path: ${{ runner.temp }}/oko-unsigned-apks/
+          if-no-files-found: error
