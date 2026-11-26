@@ -20,6 +20,11 @@ androidComponents {
     }
 }
 
+tasks.withType<Test>().configureEach {
+    // Layoutlib keeps a resource table per JVM. One worker is enough for this small suite.
+    maxParallelForks = 1
+}
+
 dependencies {
     constraints.add("testImplementation", "com.google.guava:guava") {
         attributes {
@@ -30,12 +35,12 @@ dependencies {
         }
     }
     testImplementation(libs.test.junit)
-    testImplementation(projects.features.home.impl)
-    testImplementation(projects.features.login.impl)
-    testImplementation(projects.features.messages.impl)
-    testImplementation(projects.features.preferences.impl)
-    testImplementation(projects.libraries.compound)
-    testImplementation(projects.libraries.designsystem)
-    testImplementation(projects.libraries.emoji.api)
-    testImplementation(projects.libraries.matrix.api)
+    implementation(projects.features.home.impl)
+    implementation(projects.features.login.impl)
+    implementation(projects.features.messages.impl)
+    implementation(projects.features.preferences.impl)
+    implementation(projects.libraries.compound)
+    implementation(projects.libraries.designsystem)
+    implementation(projects.libraries.emoji.api)
+    implementation(projects.libraries.matrix.api)
 }

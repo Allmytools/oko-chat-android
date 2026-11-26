@@ -4,20 +4,24 @@
 
 package io.element.android.oko.screenshot
 
-import android.widget.ImageView
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
+import com.android.resources.Density
 import com.android.resources.NightMode
 import io.element.android.compound.colors.OkoPalette
 import io.element.android.compound.colors.SemanticColorsLightDark
@@ -46,7 +50,16 @@ abstract class OkoBrandScreenshots(
 ) {
     @get:Rule
     val paparazzi = Paparazzi(
-        deviceConfig = DeviceConfig(screenWidth = 1080, screenHeight = 2160, nightMode = nightMode),
+        deviceConfig = DeviceConfig(
+            screenWidth = 720,
+            screenHeight = 1600,
+            xdpi = 320,
+            ydpi = 320,
+            density = Density.XHIGH,
+            nightMode = nightMode,
+            locale = "en",
+            softButtons = false,
+        ),
         maxPercentDifference = 0.01,
     )
 
@@ -142,14 +155,14 @@ abstract class OkoBrandScreenshots(
     @Test
     fun launcherIcon() = snapshot {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            AndroidView(
-                modifier = Modifier.size(108.dp),
-                factory = { context ->
-                    ImageView(context).apply {
-                        setImageResource(R.mipmap.ic_launcher)
-                        scaleType = ImageView.ScaleType.FIT_CENTER
-                    }
-                },
+            // Layoutlib has no launcher's adaptive mask. Render both APK layers with a round mask.
+            Image(
+                painter = painterResource(R.drawable.oko_launcher_wordmark),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(108.dp)
+                    .clip(CircleShape)
+                    .background(colorResource(R.color.oko_launcher_background)),
             )
         }
     }

@@ -65,10 +65,14 @@ jobs:
           else
             task=recordPaparazziDebug
           fi
-          ./gradlew -Pelement.enterprise=false ":features:oko-brand-screenshots:$task"
+          ./gradlew --stop
+          ./gradlew --no-daemon --no-configuration-cache --max-workers=2 \
+            '-Dorg.gradle.jvmargs=-Xmx3g -Dfile.encoding=UTF-8 -XX:+UseG1GC' \
+            -Pelement.enterprise=false ":features:oko-brand-screenshots:$task"
           for theme in Light Dark; do
-            if [[ -z "$(find "$snapshots" -name "*Oko${theme}Screenshots*.png" -type f -size +0c -print -quit)" ]]; then
-              echo "::error::Paparazzi did not produce the ${theme,,} OKO screenshots."
+            frames=$(find "$snapshots" -name "*Oko${theme}Screenshots*.png" -type f -size +0c | wc -l)
+            if [[ "$frames" -lt 5 ]]; then
+              echo "::error::Expected five ${theme,,} OKO screenshots, found $frames."
               exit 1
             fi
           done
