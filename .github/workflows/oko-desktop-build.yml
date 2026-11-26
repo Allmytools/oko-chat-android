@@ -1,0 +1,128 @@
+name: oko-desktop-build
+
+on:
+  push:
+    branches: [ai/oko-desktop]
+  pull_request:
+    branches: [oko/main]
+    paths:
+      - 'desktop/**'
+      - 'branding/oko/desktop/**'
+      - '.github/workflows/oko-desktop-build.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: oko-desktop-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    env:
+      PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN: 'false'
+      NX_DAEMON: 'false'
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+    defaults:
+      run:
+        shell: pwsh
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Read pinned Element release
+        id: element
+        run: |
+          $tag = (Get-Content desktop/ELEMENT_WEB_TAG -Raw).Trim()
+          if ($tag -notmatch '^v[0-9]+\.[0-9]+\.[0-9]+$') {
+            throw "Expected a stable Element tag, got '$tag'"
+          }
+          "tag=$tag" >> $env:GITHUB_OUTPUT
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: element-hq/element-web
+          ref: refs/tags/${{ steps.element.outputs.tag }}
+          path: element-web
+          persist-credentials: false
+
+      - uses: pnpm/setup@fa36a5ef7dcdefc3a7cb25655c122e00cf6e636e # v3.1.2
+        with:
+          working-directory: element-web
+          node-version-file: apps/desktop/.node-version
+          install: false
+
+      - name: Install Element Desktop build dependencies
+        working-directory: element-web/apps/desktop
+        run: pnpm install --frozen-lockfile --filter element-desktop
+
+      - name: Verify released web package and apply OKO design
+        working-directory: element-web/apps/desktop
+        env:
+          ELEMENT_WEB_TAG: ${{ steps.element.outputs.tag }}
+        run: |
+          $PSNativeCommandUseErrorActionPreference = $true
+          $version = node -p "require('./package.json').version"
+          if ("v$version" -cne $env:ELEMENT_WEB_TAG) {
+            throw "Element Desktop version '$version' differs from release tag '$env:ELEMENT_WEB_TAG'"
+          }
+
+          if (-not (Get-Command gpg -ErrorAction SilentlyContinue)) {
+            $env:PATH = "C:\Program Files\Git\usr\bin;$env:PATH"
+          }
+          $env:GNUPGHOME = Join-Path $env:RUNNER_TEMP oko-desktop-gnupg
+          New-Item $env:GNUPGHOME -ItemType Directory | Out-Null
+          $config = Join-Path $env:RUNNER_TEMP oko-desktop-config
+          node "$env:GITHUB_WORKSPACE/desktop/config/generate.mjs" $config
+
+          pnpm run fetch --importkey
+          gpg --batch --list-keys 712BFBEE92DCA45252DB17D7C7BE97EFA179B100
+          pnpm run fetch --cfgdir "$config"
+
+          pnpm exec asar extract webapp.asar webapp
+          New-Item webapp/themes/oko -ItemType Directory -Force | Out-Null
+          $brand = "$env:GITHUB_WORKSPACE/branding/oko/desktop"
+          Copy-Item "$brand/login", "$brand/home" webapp/themes/oko -Recurse
+          Copy-Item "$brand/icons/icon.ico", "$brand/icons/icon.png" build
+          pnpm run asar-webapp
+
+      - name: Build unsigned Windows x64 installer
+        working-directory: element-web/apps/desktop
+        run: |
+          $env:VARIANT_PATH = "$env:GITHUB_WORKSPACE/desktop/variant.test.json"
+          pnpm run build --publish never --x64 -w squirrel
+
+      - name: Check the packaged application and write SHA-256 sums
+        working-directory: element-web/apps/desktop
+        run: |
+          $PSNativeCommandUseErrorActionPreference = $true
+          $output = "$env:RUNNER_TEMP/oko-desktop-windows-test"
+          $config = "$env:RUNNER_TEMP/oko-desktop-config/config.json"
+          $app = Get-Item 'dist/win-unpacked/OKO test.exe'
+          if ($app.VersionInfo.ProductName -cne 'OKO test') {
+            throw "Unexpected Windows product name '$($app.VersionInfo.ProductName)'"
+          }
+          pnpm exec asar extract dist/win-unpacked/resources/webapp.asar packaged-web
+          node "$env:GITHUB_WORKSPACE/desktop/config/verify.mjs" packaged-web $config
+
+          $installers = @(Get-ChildItem dist -Recurse -File -Filter '*Setup*.exe')
+          if ($installers.Count -ne 1 -or $installers[0].Length -eq 0) {
+            throw "Expected one nonempty Windows Setup.exe, found $($installers.Count)"
+          }
+          New-Item $output -ItemType Directory | Out-Null
+          Copy-Item -LiteralPath $installers[0].FullName -Destination $output
+          Get-ChildItem $output -Filter '*.exe' | ForEach-Object {
+            $hash = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+            "$hash  $($_.Name)"
+          } | Set-Content -Encoding ascii (Join-Path $output SHA256SUMS.txt)
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: oko-desktop-windows-test
+          path: ${{ runner.temp }}/oko-desktop-windows-test/
+          if-no-files-found: error
