@@ -1,0 +1,59 @@
+{
+  "name": "OKO темна",
+  "is_dark": true,
+  "colors": {
+    "accent-color": "#21C063",
+    "primary-color": "#21C063",
+    "warning-color": "#FD3E3C",
+    "sidebar-color": "#1D1F24",
+    "roomlist-background-color": "#101317",
+    "roomlist-text-color": "#EBEEF2",
+    "roomlist-text-secondary-color": "#808994",
+    "roomlist-highlights-color": "#1D1F24",
+    "roomlist-separator-color": "#26282D",
+    "timeline-background-color": "#101317",
+    "timeline-text-color": "#EBEEF2",
+    "timeline-text-secondary-color": "#808994",
+    "timeline-highlights-color": "#1D1F24",
+    "username-colors": [
+      "#56C02C",
+      "#21BACD",
+      "#D991DE",
+      "#AD9CFE",
+      "#FE84A2",
+      "#F6913D",
+      "#3FC4B4",
+      "#D6B11E"
+    ],
+    "avatar-background-colors": [
+      "#002600",
+      "#001B4E",
+      "#37004E",
+      "#22006A",
+      "#450018",
+      "#470000",
+      "#00302B",
+      "#3A2C00"
+    ]
+  },
+  "compound": {
+    "--cpd-color-bg-accent-rest": "#21C063",
+    "--cpd-color-bg-accent-hovered": "#3CCB78",
+    "--cpd-color-bg-accent-pressed": "#5BD48D",
+    "--cpd-color-bg-accent-subtle": "#04200F",
+    "--cpd-color-bg-badge-accent": "#0F3A22",
+    "--cpd-color-text-badge-accent": "#5BD48D",
+    "--cpd-color-border-accent-primary": "#21C063",
+    "--cpd-color-border-accent-subtle": "#146B3A",
+    "--cpd-color-gradient-action-stop1": "#5BD48D",
+    "--cpd-color-gradient-action-stop2": "#21C063",
+    "--cpd-color-gradient-action-stop3": "#168A46",
+    "--cpd-color-gradient-action-stop4": "#0B4A26",
+    "--cpd-color-icon-accent-primary": "#21C063",
+    "--cpd-color-icon-accent-tertiary": "#1A9A4F",
+    "--cpd-color-text-action-accent": "#21C063",
+    "--cpd-color-bg-action-primary-rest": "#21C063",
+    "--cpd-color-bg-action-primary-hovered": "#3CCB78",
+    "--cpd-color-bg-action-primary-pressed": "#5BD48D"
+  }
+}

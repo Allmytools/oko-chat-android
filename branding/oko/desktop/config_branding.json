@@ -1,0 +1,24 @@
+{
+  "brand": "OKO",
+  "branding": {
+    "welcome_background_url": "themes/oko/login/background.jpg",
+    "auth_header_logo_url": "themes/oko/login/logo.svg",
+    "auth_footer_links": []
+  },
+  "embedded_pages": {
+    "home_url": "themes/oko/home/home.html"
+  },
+  "default_theme": "custom-OKO світла",
+  "setting_defaults": {
+    "custom_themes": [
+      "<<вміст theme_oko_light.json>>",
+      "<<вміст theme_oko_dark.json>>"
+    ]
+  },
+  "_примітки": {
+    "шляхи": "відносні до кореня Element Web; виконавець (ЧА2) кладе теку в webapp/themes/oko/ або змінює шляхи",
+    "auth_footer_links": "порожньо — власник ще не дав перелік; додати [{\"text\":…, \"url\":…}]",
+    "default_theme": "внутрішня назва теми = custom-<name>; темна — custom-OKO темна. Перемикання за системою — стандартне налаштування Element",
+    "logo_link_url": "не задано — виконавець ставить адресу ОКО, коли власник її дасть"
+  }
+}
