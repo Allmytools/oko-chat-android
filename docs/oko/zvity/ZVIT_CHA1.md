@@ -2,11 +2,10 @@
 
 ## Для власника
 
-- У гілці `ai/oko-brand` підготовлено назву, значки, логотип привітання, заставку й палітру OKO. Це TEMP,
-  поки дизайнер не передасть остаточний пакет.
-- Перший APK матиме назву «OKO test» та ідентифікатор `com.interatletika.oko.test`. Варіант F-Droid не використовує Firebase.
-- Після появи підписаного артефакту `oko-test-apks` в Actions скачай і розпакуй архів. Для Pixel підійде APK `arm64-v8a`,
-  також є універсальний APK. Відкрий один APK через файловий менеджер і підтвердь встановлення.
+- «OKO test» має остаточний бренд B4 та ідентифікатор `com.interatletika.oko.test`. Варіант F-Droid не використовує Firebase.
+- Відкрий зелений `oko-build` у GitHub Actions, завантаж `oko-test-apks-debugkey` з розділу **Artifacts** і розпакуй ZIP.
+- На Pixel відкрий `oko-test-arm64-v8a.apk` через «Файли» та підтвердь встановлення. За потреби дозволь встановлення для цього джерела.
+- Після переходу на окремий тестовий ключ один раз перевстанови «OKO test». Перед видаленням збережи доступ до відновлення Matrix.
 - Сервер Matrix поки можна вибирати. Створення акаунта в застосунку вимкнене. Вхід через обраний MAS ще треба перевірити на APK.
 - Для фонових push потрібен сумісний дистриб'ютор UnifiedPush і робочий шлюз. Без них повідомлення можна побачити
   під час активної синхронізації у відкритому застосунку, а фоновий push не підтверджено. Вибір чи діагностика способу
@@ -18,9 +17,15 @@
 
 `-Pelement.enterprise=false` примусово обирає відкриті модулі. Підмодуль `enterprise` збірка `oko-build` не завантажує.
 `-Poko.test=true` є типовим для release. Для робочої версії `-Poko.test=false` обирає `com.interatletika.oko`.
-Збирання release створює APK без підпису. Після тестів Actions підписує лише тестові APK, окремими секретами
-`OKO_TEST_SIGNING_*` на push у `ai/oko-brand`. За відсутності тестових секретів `oko-test-apks-unsigned` містить обидва перевірені APK без підпису.
-Android встановлює APK лише після підпису. Робочий ключ для цього прогону не потрібен.
+Збирання release створює APK без підпису. На push у `ai/oko-brand` workflow перевіряє режим `-Poko.test=true`
+і пакет `com.interatletika.oko.test` в обох APK перед підписом. Повний комплект секретів `OKO_TEST_SIGNING_*`
+дає артефакт `oko-test-apks`. Якщо всі чотири секрети відсутні, відкритий налагоджувальний ключ Element дає
+`oko-test-apks-debugkey`. Частково заповнений комплект зупиняє підпис. PR запускає перевірки без секретів
+і надає непідписаний артефакт `oko-test-apks-unsigned`.
+
+SHA-256 сертифіката налагоджувального ключа Element:
+`b0b051dc565c812fe17f6f3e945b4d79047123ab0da61286769eb2949197130e`.
+Обидва APK перевіряються командою `apksigner verify --print-certs` і мають збігатися з відбитком вибраного ключа.
 
 ```sh
 ./gradlew -Pelement.enterprise=false -Poko.test=true \
@@ -38,8 +43,7 @@ Android встановлює APK лише після підпису. Робоч�
 
 Локальний прогін `:features:enterprise:impl-foss:testDebugUnitTest` на фінальній палітрі дав **18 із 18**. У
 [зеленому oko-build для коду `b1d10902`](https://github.com/Allmytools/oko-chat-android/actions/runs/45770363981)
-пройшли тести, перевірка APK і рендер. Артефакт `oko-test-apks-unsigned` має два непідписані файли:
-`oko-test-universal-unsigned.apk` і `oko-test-arm64-v8a-unsigned.apk`. Здача — [PR №1](https://github.com/Allmytools/oko-chat-android/pull/1).
+пройшли тести, перевірка APK і рендер. Підпис тестових APK додано за ЧА1-02. Здача — [PR №1](https://github.com/Allmytools/oko-chat-android/pull/1).
 
 ## Зміни та контраст
 

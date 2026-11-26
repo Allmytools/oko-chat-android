@@ -32,5 +32,6 @@
 | `features/enterprise/impl-foss/…/OkoPaletteTest.kt` | Контраст і збереження еталонної палітри | Новий файл, 0 | `:features:enterprise:impl-foss:testDebugUnitTest` |
 | `features/oko-brand-screenshots/` | Окремий Gradle-модуль та знімки Compose обох тем | Нові файли, 0 | `:features:oko-brand-screenshots:recordPaparazziDebug`, після появи еталонів — `verifyPaparazziDebug` |
 | `.github/workflows/oko-build.yml` | FOSS APK, тести, знімки й підпис тестового артефакту | Новий файл, 0 | Actions, `oko-build` |
+| `.github/workflows/scripts/sign-oko-test-apks.sh` | ЧА1-02. Перевірка режиму й пакета, вибір тестового ключа, звірка підписів обох APK | Новий файл, 0 | У `oko-build` перевірити підпис і артефакт для обох архітектур |
 | `docs/oko/zvity/ZVIT_CHA1.md` | Збірка, умови тестування й контраст для власника | Новий файл, 0 | Узгодити з артефактами Actions |
 | `.github/workflows/oko-sync-upstream.yml` | Вимкнена підготовка оновлень, окрема гілка, перевірка й чернетка PR | Новий файл, 0 | Після погодження перевірити ручний запуск і обробку конфліктів |

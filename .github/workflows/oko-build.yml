@@ -20,6 +20,8 @@ jobs:
     if: github.repository == 'Allmytools/oko-chat-android'
     runs-on: ubuntu-latest
     timeout-minutes: 50
+    env:
+      OKO_BUILD_TEST: 'true'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -35,7 +37,7 @@ jobs:
           packages: 'platforms;android-37.0 build-tools;37.0.0'
       - name: Build F-Droid APKs and run unit tests
         run: |
-          ./gradlew -Pelement.enterprise=false -Poko.test=true \
+          ./gradlew -Pelement.enterprise=false "-Poko.test=$OKO_BUILD_TEST" \
             :app:assembleFdroidRelease :app:testFdroidDebugUnitTest \
             :features:enterprise:impl-foss:testDebugUnitTest
       - name: Verify test APK variants
@@ -95,39 +97,16 @@ jobs:
           OKO_TEST_SIGNING_STORE_PASSWORD: ${{ secrets.OKO_TEST_SIGNING_STORE_PASSWORD }}
           OKO_TEST_SIGNING_KEY_ALIAS: ${{ secrets.OKO_TEST_SIGNING_KEY_ALIAS }}
           OKO_TEST_SIGNING_KEY_PASSWORD: ${{ secrets.OKO_TEST_SIGNING_KEY_PASSWORD }}
-        run: |
-          if [[ -z "${OKO_TEST_SIGNING_STORE_BASE64}${OKO_TEST_SIGNING_STORE_PASSWORD}${OKO_TEST_SIGNING_KEY_ALIAS}${OKO_TEST_SIGNING_KEY_PASSWORD}" ]]; then
-            echo "::notice::Test signing secrets are not configured. The APKs were built unsigned."
-            exit 0
-          fi
-          : "${OKO_TEST_SIGNING_STORE_BASE64:?Missing test signing store}"
-          : "${OKO_TEST_SIGNING_STORE_PASSWORD:?Missing test store password}"
-          : "${OKO_TEST_SIGNING_KEY_ALIAS:?Missing test signing alias}"
-          : "${OKO_TEST_SIGNING_KEY_PASSWORD:?Missing test key password}"
-          umask 077
-          store="$(mktemp)"
-          trap 'rm -f "$store"' EXIT
-          printf '%s' "$OKO_TEST_SIGNING_STORE_BASE64" | base64 --decode > "$store"
-          tools="$ANDROID_HOME/build-tools/37.0.0"
-          mkdir -p "$RUNNER_TEMP/oko-apks"
-          for abi in universal arm64-v8a; do
-            apk="$RUNNER_TEMP/oko-unsigned-apks/oko-test-$abi-unsigned.apk"
-            output="$RUNNER_TEMP/oko-apks/oko-test-$abi.apk"
-            "$tools/apksigner" sign --ks "$store" --ks-type PKCS12 --ks-key-alias "$OKO_TEST_SIGNING_KEY_ALIAS" \
-              --ks-pass env:OKO_TEST_SIGNING_STORE_PASSWORD --key-pass env:OKO_TEST_SIGNING_KEY_PASSWORD \
-              --out "$output" "$apk"
-            "$tools/apksigner" verify "$output"
-          done
-          echo 'signed=true' >> "$GITHUB_OUTPUT"
+        run: bash .github/workflows/scripts/sign-oko-test-apks.sh
       - name: Upload signed OKO test APKs
-        if: steps.sign.outputs.signed == 'true'
+        if: steps.sign.outputs.artifact != ''
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: oko-test-apks
+          name: ${{ steps.sign.outputs.artifact }}
           path: ${{ runner.temp }}/oko-apks/
           if-no-files-found: error
       - name: Upload unsigned OKO test APKs
-        if: steps.sign.outputs.signed != 'true'
+        if: steps.sign.outputs.artifact == ''
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: oko-test-apks-unsigned
