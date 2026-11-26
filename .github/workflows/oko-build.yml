@@ -29,13 +29,30 @@ jobs:
       - uses: ./.github/actions/setup-build
         with:
           gradle-cache-read-only: 'true'
-      - name: Install Android SDK
-        run: sdkmanager 'platforms;android-37.0' 'build-tools;37.0.0'
+      - uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
+        with:
+          log-accepted-android-sdk-licenses: 'false'
+          packages: 'platforms;android-37.0 build-tools;37.0.0'
       - name: Build F-Droid APKs and run unit tests
         run: |
           ./gradlew -Pelement.enterprise=false -Poko.test=true \
             :app:assembleFdroidRelease :app:testFdroidDebugUnitTest \
             :features:enterprise:impl-foss:testDebugUnitTest
+      - name: Verify test APK variants
+        shell: bash
+        run: |
+          tools="$ANDROID_HOME/build-tools/37.0.0"
+          shopt -s nullglob
+          for abi in universal arm64-v8a; do
+            apks=(app/build/outputs/apk/fdroid/release/*-"$abi"-*.apk)
+            if [[ ${#apks[@]} -ne 1 ]]; then
+              echo "::error::Expected exactly one F-Droid APK for $abi, found ${#apks[@]}."
+              exit 1
+            fi
+            "$tools/aapt" dump badging "${apks[0]}" > "$RUNNER_TEMP/oko-test-badging.txt"
+            grep -Eq "^package: name='com\.interatletika\.oko\.test' " "$RUNNER_TEMP/oko-test-badging.txt"
+            grep -Fx "application-label:'OKO test'" "$RUNNER_TEMP/oko-test-badging.txt"
+          done
       - name: Render or verify OKO screenshots
         shell: bash
         run: |
@@ -93,9 +110,6 @@ jobs:
               --ks-pass env:OKO_TEST_SIGNING_STORE_PASSWORD --key-pass env:OKO_TEST_SIGNING_KEY_PASSWORD \
               --out "$output" "${apks[0]}"
             "$tools/apksigner" verify "$output"
-            "$tools/aapt" dump badging "$output" > "$RUNNER_TEMP/oko-test-badging.txt"
-            grep -Eq "^package: name='com\.interatletika\.oko\.test' " "$RUNNER_TEMP/oko-test-badging.txt"
-            grep -Fx "application-label:'OKO test'" "$RUNNER_TEMP/oko-test-badging.txt"
           done
           echo 'signed=true' >> "$GITHUB_OUTPUT"
       - name: Upload signed OKO test APKs

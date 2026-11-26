@@ -1,0 +1,116 @@
+name: oko-sync-upstream
+
+on:
+  workflow_dispatch:
+  # Add the weekly schedule after the owner approves enabling this workflow.
+  # schedule:
+  #   - cron: '0 5 * * 2'
+
+permissions: {}
+
+concurrency:
+  group: oko-sync-upstream
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    if: github.repository == 'Allmytools/oko-chat-android' && vars.OKO_ENABLE_UPSTREAM_SYNC == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    outputs:
+      branch: ${{ steps.merge.outputs.branch }}
+      sha: ${{ steps.merge.outputs.sha }}
+      tag: ${{ steps.merge.outputs.tag }}
+      conflicts: ${{ steps.merge.outputs.conflicts }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: oko/main
+          fetch-depth: 0
+          submodules: false
+      - name: Prepare upstream branch
+        id: merge
+        shell: bash
+        run: |
+          git remote add upstream https://github.com/element-hq/element-x-android.git
+          git ls-remote --tags --refs upstream > "$RUNNER_TEMP/oko-upstream-tags"
+          tag=$(awk '{print $2}' "$RUNNER_TEMP/oko-upstream-tags" |
+            sed -nE 's@^refs/tags/(v[0-9]+\.[0-9]+\.[0-9]+)$@\1@p' |
+            sort -V | tail -n 1)
+          test -n "$tag"
+          git fetch --no-tags upstream "refs/tags/$tag:refs/tags/$tag"
+          if git merge-base --is-ancestor "refs/tags/$tag^{commit}" HEAD; then
+            echo "oko/main already contains $tag."
+            exit 0
+          fi
+
+          branch="ai/oko-sync-$tag"
+          git ls-remote origin "refs/heads/$branch" > "$RUNNER_TEMP/oko-existing-branch"
+          if [[ -s "$RUNNER_TEMP/oko-existing-branch" ]]; then
+            echo "An update branch already exists: $branch"
+            exit 0
+          fi
+
+          git -c core.hooksPath=/dev/null switch -c "$branch"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          conflicts=false
+          if ! git -c core.hooksPath=/dev/null merge --no-edit --no-ff "refs/tags/$tag"; then
+            git diff --name-only --diff-filter=U > "$RUNNER_TEMP/oko-sync-conflicts"
+            test -s "$RUNNER_TEMP/oko-sync-conflicts"
+            git merge --abort
+            conflicts=true
+            report="docs/oko/zvity/ZVIT_SYNC_${tag}.md"
+            {
+              printf '# Конфлікти оновлення Element %s\n\n' "$tag"
+              printf '%s\n\n' 'Злиття перервано. Для інтегратора наведено файли, що потребують ручної перевірки.'
+              while IFS= read -r path; do printf -- '- `%s`\n' "$path"; done < "$RUNNER_TEMP/oko-sync-conflicts"
+            } > "$report"
+            git add -- "$report"
+            git -c core.hooksPath=/dev/null commit -m "OKO: конфлікти оновлення Element $tag"
+          fi
+
+          git push origin "HEAD:refs/heads/$branch"
+          {
+            echo "branch=$branch"
+            echo "sha=$(git rev-parse HEAD)"
+            echo "tag=$tag"
+            echo "conflicts=$conflicts"
+          } >> "$GITHUB_OUTPUT"
+
+  verify:
+    needs: sync
+    if: needs.sync.outputs.branch != '' && needs.sync.outputs.conflicts == 'false'
+    permissions:
+      contents: read
+    uses: ./.github/workflows/oko-build.yml
+    with:
+      checkout_ref: ${{ needs.sync.outputs.sha }}
+
+  review:
+    needs: [sync, verify]
+    if: always() && !cancelled() && needs.sync.result == 'success' && needs.sync.outputs.branch != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      SYNC_BRANCH: ${{ needs.sync.outputs.branch }}
+      UPSTREAM_TAG: ${{ needs.sync.outputs.tag }}
+      HAS_CONFLICTS: ${{ needs.sync.outputs.conflicts }}
+      VERIFY_RESULT: ${{ needs.verify.result }}
+    steps:
+      - name: Open draft for the integrator
+        shell: bash
+        run: |
+          if [[ "$HAS_CONFLICTS" == true ]]; then
+            body="Злиття перервано. Див. docs/oko/zvity/ZVIT_SYNC_${UPSTREAM_TAG}.md у цій гілці."
+          else
+            body="Злиття пройшло без конфліктів. Результат збірки, тестів і знімків: $VERIFY_RESULT."
+          fi
+          gh pr create --base oko/main --head "$SYNC_BRANCH" --draft \
+            --title "OKO: оновлення Element $UPSTREAM_TAG" --body "$body"

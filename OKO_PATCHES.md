@@ -33,3 +33,4 @@
 | `features/oko-brand-screenshots/` | Окремий Gradle-модуль та знімки Compose обох тем | Нові файли, 0 | `:features:oko-brand-screenshots:recordPaparazziDebug`, після появи еталонів — `verifyPaparazziDebug` |
 | `.github/workflows/oko-build.yml` | FOSS APK, тести, знімки й підпис тестового артефакту | Новий файл, 0 | Actions, `oko-build` |
 | `docs/oko/zvity/ZVIT_CHA1.md` | Збірка, умови тестування й контраст для власника | Новий файл, 0 | Узгодити з артефактами Actions |
+| `.github/workflows/oko-sync-upstream.yml` | Вимкнена підготовка оновлень, окрема гілка, перевірка й чернетка PR | Новий файл, 0 | Після погодження перевірити ручний запуск і обробку конфліктів |
