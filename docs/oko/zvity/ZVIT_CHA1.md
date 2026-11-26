@@ -3,7 +3,7 @@
 ## Для власника
 
 - «OKO test» має остаточний бренд B4 та ідентифікатор `com.interatletika.oko.test`. Варіант F-Droid не використовує Firebase.
-- Відкрий зелений `oko-build` у GitHub Actions, завантаж `oko-test-apks-debugkey` з розділу **Artifacts** і розпакуй ZIP.
+- Завантаж [`oko-test-apks-debugkey`](https://github.com/Allmytools/oko-chat-android/actions/runs/45776701279/artifacts/15096543213) із зеленого `oko-build` і розпакуй ZIP.
 - На Pixel відкрий `oko-test-arm64-v8a.apk` через «Файли» та підтвердь встановлення. За потреби дозволь встановлення для цього джерела.
 - Після переходу на окремий тестовий ключ один раз перевстанови «OKO test». Перед видаленням збережи доступ до відновлення Matrix.
 - Сервер Matrix поки можна вибирати. Створення акаунта в застосунку вимкнене. Вхід через обраний MAS ще треба перевірити на APK.
@@ -25,7 +25,7 @@
 
 SHA-256 сертифіката налагоджувального ключа Element:
 `b0b051dc565c812fe17f6f3e945b4d79047123ab0da61286769eb2949197130e`.
-Обидва APK перевіряються командою `apksigner verify --print-certs` і мають збігатися з відбитком вибраного ключа.
+На [зеленому прогоні ЧА1-02](https://github.com/Allmytools/oko-chat-android/actions/runs/45776701279) команда `apksigner verify --print-certs` підтвердила цей відбиток для обох APK.
 
 ```sh
 ./gradlew -Pelement.enterprise=false -Poko.test=true \
