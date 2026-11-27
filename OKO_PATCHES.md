@@ -45,3 +45,4 @@
 | `branding/oko/res/drawable*/{onboarding_logo.png,oko_splash.xml}` | Логотип входу та вектор заставки у двох темах | 🟢 заміна ресурсів OKO в погоджених слотах | Знімки холодного запуску й входу |
 | `docs/oko/PROTOKOL.md`, ЧА3 | Статус Android | 🟢 документація | Звірити з `oko-build` |
 | `.github/workflows/oko-build.yml`; `.github/workflows/scripts/{boot-oko-android-emulator.sh,capture-oko-android.py}` | Знімки APK на Android 15, запуск із лаунчера і перевірка системної теми та тематичного значка | 🟢 CI OKO | Артефакт `oko-android-b5c` на push робочої гілки |
+| `docs/oko/zvity/ZVIT_CHA3.md` | Звіт ЧА3 і посилання на артефакти | 🟢 документація OKO | Звірити з обома CI-збірками |

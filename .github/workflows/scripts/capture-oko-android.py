@@ -29,16 +29,19 @@ def hierarchy():
     return ElementTree.fromstring(adb("exec-out", "cat", "/sdcard/oko-window.xml"))
 
 
-def app_icon():
+def app_icon(*, workspace=False):
     for node in hierarchy().iter("node"):
         if LABEL in (node.get("text"), node.get("content-desc")):
-            return tuple(map(int, re.findall(r"\d+", node.attrib["bounds"])))
+            bounds = tuple(map(int, re.findall(r"\d+", node.attrib["bounds"])))
+            # The launcher hotseat can suggest apps and replace them after a theme change.
+            if not workspace or bounds[3] < HEIGHT * 0.73:
+                return bounds
     return None
 
 
-def wait_for_icon():
+def wait_for_icon(*, workspace=False):
     for _ in range(4):
-        bounds = app_icon()
+        bounds = app_icon(workspace=workspace)
         if bounds:
             return bounds
         time.sleep(1)
@@ -52,14 +55,15 @@ def home():
 
 def pin_icon():
     home()
-    if app_icon():
-        return
-    shell("input", "swipe", "270", "820", "270", "310", "400")
-    time.sleep(1.2)
-    left, top, right, bottom = wait_for_icon()
-    shell("input", "draganddrop", str((left + right) // 2), str((top + bottom) // 2), "270", "390", "1800")
-    time.sleep(2)
-    wait_for_icon()
+    for _ in range(2):
+        if app_icon(workspace=True):
+            return
+        shell("input", "swipe", "270", "820", "270", "310", "400")
+        time.sleep(1.2)
+        left, top, right, bottom = wait_for_icon()
+        shell("input", "draganddrop", str((left + right) // 2), str((top + bottom) // 2), "270", "390", "1800")
+        home()
+    wait_for_icon(workspace=True)
 
 
 def screenshot():
@@ -67,8 +71,8 @@ def screenshot():
 
 
 def launcher_capture(output):
-    home()
-    left, top, right, bottom = wait_for_icon()
+    pin_icon()
+    left, top, right, bottom = wait_for_icon(workspace=True)
     data = screenshot()
     output.write_bytes(data)
     with Image.open(BytesIO(data)) as image:
@@ -101,7 +105,7 @@ def app_screen(activity, output, appearance):
                     rgb = frame.convert("RGB")
                     cx, cy = rgb.width // 2, rgb.height // 2
                     middle = rgb.crop((cx - 65, cy - 65, cx + 65, cy + 65))
-                    green = sum(1 for r, g, b in middle.getdata() if r <= 7 and 121 <= g <= 135 and 97 <= b <= 113)
+                    green = sum(1 for r, g, b in middle.get_flattened_data() if r <= 7 and 121 <= g <= 135 and 97 <= b <= 113)
                     if green > 2300:
                         splash.write_bytes(data)
                         break
@@ -150,6 +154,7 @@ def main():
         time.sleep(1)
         normal_icon = launcher_capture(output / ("launcher-" + appearance + ".png"))
         app_screen(activity, output, appearance)
+        home()
         theme_icons(launcher, True)
         themed_icon = launcher_capture(output / ("launcher-themed-" + appearance + ".png"))
         if themed_icon == normal_icon:
