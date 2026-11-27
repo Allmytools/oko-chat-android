@@ -3,18 +3,26 @@ set -euo pipefail
 
 image='system-images;android-35;google_apis;x86_64'
 sdk="$ANDROID_HOME/cmdline-tools/latest/bin"
+export ANDROID_USER_HOME="$RUNNER_TEMP/oko-android-user"
+export ANDROID_AVD_HOME="$ANDROID_USER_HOME/avd"
+unset ANDROID_SDK_HOME
+mkdir -p "$ANDROID_AVD_HOME"
 "$sdk/sdkmanager" emulator "$image"
-"$sdk/avdmanager" create avd --force --name oko-b5c --package "$image" <<< no
+"$sdk/avdmanager" create avd --force --name oko-b5c --package "$image" \
+    --device pixel_6 --path "$ANDROID_AVD_HOME/oko-b5c.avd"
+test -f "$ANDROID_AVD_HOME/oko-b5c.ini"
+"$ANDROID_HOME/emulator/emulator" -list-avds | grep -Fx oko-b5c
 test -c /dev/kvm
 sudo chmod a+rw /dev/kvm
 "$ANDROID_HOME/emulator/emulator" -avd oko-b5c -no-window -no-audio -no-boot-anim \
     -no-snapshot -camera-back none -camera-front none -gpu swiftshader_indirect \
     > "$RUNNER_TEMP/oko-emulator.log" 2>&1 &
+emulator_pid=$!
 trap 'adb emu kill || true' EXIT
 
 deadline=$((SECONDS + 180))
 until [[ $(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r') == 1 ]]; do
-    if (( SECONDS >= deadline )); then
+    if ! kill -0 "$emulator_pid" 2>/dev/null || (( SECONDS >= deadline )); then
         tail -80 "$RUNNER_TEMP/oko-emulator.log"
         exit 1
     fi

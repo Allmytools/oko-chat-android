@@ -20,6 +20,8 @@ jobs:
     if: github.repository == 'Allmytools/oko-chat-android'
     runs-on: ubuntu-latest
     timeout-minutes: 50
+    outputs:
+      signed-apks: ${{ steps.sign.outputs.artifact }}
     env:
       OKO_BUILD_TEST: 'true'
     steps:
@@ -112,11 +114,28 @@ jobs:
           name: oko-test-apks-unsigned
           path: ${{ runner.temp }}/oko-unsigned-apks/
           if-no-files-found: error
+
+  android-b5c:
+    needs: test-apk
+    if: needs.test-apk.outputs.signed-apks != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
+        with:
+          log-accepted-android-sdk-licenses: 'false'
+          packages: 'platform-tools'
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: ${{ needs.test-apk.outputs.signed-apks }}
+          path: ${{ runner.temp }}/oko-apks/
       - name: Capture B5c on Android 15
-        if: steps.sign.outputs.artifact != ''
         run: bash .github/workflows/scripts/boot-oko-android-emulator.sh
       - name: Upload Android B5c emulator screenshots
-        if: steps.sign.outputs.artifact != '' && !cancelled()
+        if: always() && !cancelled()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: oko-android-b5c
