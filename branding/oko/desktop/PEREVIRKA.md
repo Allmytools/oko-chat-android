@@ -6,14 +6,14 @@
 | `theme_oko_light.json`, `theme_oko_dark.json` | теми у форматі `setting_defaults.custom_themes` (блоки `colors` і `compound`) | вставити обидва об'єкти в масив `custom_themes` у `config.json` |
 | `config_branding.json` | `brand`, `branding`, `embedded_pages`, `default_theme` | злити з `config.json`; шляхи `themes/oko/…` — відносно кореня Element Web (тека кладеться в `webapp/themes/oko/`) |
 | `login/background.jpg` | фон входу 1920×1080, світлий, без тексту | `welcome_background_url` |
-| `login/logo.svg` | логотип 200×60 (знак B4 + «OKO» контурами, зелений — читається на світлій і темній картці) | `auth_header_logo_url` |
+| `login/logo.svg` | логотип 200×60 (знак B5c + «OKO» контурами, зелений — читається на світлій і темній картці) | `auth_header_logo_url` |
 | `home/home.html`, `home/oko_znak.svg` | домашня сторінка | `embedded_pages.home_url` |
 | `icons/icon.png` | 512×512, прозорий фон | значок програми (Linux/інсталятор) |
-| `icons/icon.ico` | 16, 24, 32 (спрощений знак) + 48, 64, 128, 256 (повний B4) | Windows: панель завдань, трей, інсталятор |
+| `icons/icon.ico` | 16, 24, 32 (спрощений знак) + 48, 64, 128, 256 (повний B5c) | Windows: панель завдань, трей, інсталятор |
 | `icons/favicon.ico` | 16, 32 (спрощений) + 48 (повний) | Element Web, вкладка браузера |
 | `icons/icon-192.png`, `icons/icon-512.png` | PNG для вебу | маніфест Element Web |
 | `icons/icon.svg`, `icons/icon_mini.svg` | вихідні вектори повного й спрощеного знака | — |
-| `install-spinner.gif` | анімація інсталятора Windows 320×320, 48 кадрів × 40 мс: значок B4, крапки в бульбашці «друкують» (власник обрав 27.11, варіант C) | `electron-builder` → Squirrel `loadingGif` (замість анімації Element) |
+| `install-spinner.gif` | анімація інсталятора Windows 320×320, 48 кадрів × 40 мс: значок B5c, крапки в бульбашці «друкують» (власник обрав 27.11, варіант C) | `electron-builder` → Squirrel `loadingGif` (замість анімації Element) |
 | `wallpaper/` | **ПРОПОЗИЦІЯ, не погоджено:** шпалери чату «ОКО» (власні контурні значки на тему дитячих і спортивних майданчиків: гойдалки, гірки, карусель, пісочниця, діти граються, стадіон, ворота, м'ячі, вуличні тренажери, кубки; + знак ОКО в бульбашці), безшовна плитка 480×480, світла — бежева, як у WhatsApp (фон `#F4F0E9`, лінії `#E3D9CC`), і темна (фон `#101317`); плитка 640×640, великі фігурки 30–60 px, як у WhatsApp | лише після погодження інтегратора — див. розділ 5, п. 6 |
 | `previews/` | вхід, кімната + чат, домашня — світла й темна, 1920×1080 | для звірки; затвердження — за знімками збірки |
 
