@@ -112,3 +112,13 @@ jobs:
           name: oko-test-apks-unsigned
           path: ${{ runner.temp }}/oko-unsigned-apks/
           if-no-files-found: error
+      - name: Capture B5c on Android 15
+        if: steps.sign.outputs.artifact != ''
+        run: bash .github/workflows/scripts/boot-oko-android-emulator.sh
+      - name: Upload Android B5c emulator screenshots
+        if: steps.sign.outputs.artifact != '' && !cancelled()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: oko-android-b5c
+          path: ${{ runner.temp }}/oko-android-b5c/
+          if-no-files-found: warn
