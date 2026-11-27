@@ -22,3 +22,4 @@
 | `branding/oko/desktop/wallpaper/oko-wallpaper.css`; `desktop/config/{brand-webapp,wallpaper,verify}.mjs` | Шпалери лише у стрічці OKO. Перевірка чинних селекторів у вебпакеті | 🟡 погоджено для ЧА3 | Перевірка CSS, вмісту `webapp.asar` і відображення у Playwright |
 | `desktop/config/extract-installer-gif.ps1`, `.github/workflows/oko-desktop-build.yml`, `desktop/screenshots/capture.mjs` | Інсталятор, звірка вкладеного GIF і перевірка всіх тем | 🟢 збирання й тести OKO | Зелений `oko-desktop-build` і сім PNG |
 | `docs/oko/PROTOKOL.md`, ЧА3 | Статус Windows | 🟢 документація | Звірити з `oko-desktop-build` |
+| `docs/oko/zvity/ZVIT_CHA3.md` | Звіт ЧА3 і посилання на артефакти | 🟢 документація OKO | Звірити з обома CI-збірками |
