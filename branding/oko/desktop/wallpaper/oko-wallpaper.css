@@ -1,0 +1,11 @@
+/* Element sets these inline properties from the active custom theme and clears
+   them before switching themes. Built-in themes do not define either property. */
+body[style*="--oko-wallpaper-light:"] .mx_RoomView_timeline > .mx_RoomView_messagePanel {
+    background-color: var(--oko-wallpaper-light);
+    background-image: url("wallpaper_light.svg");
+}
+
+body[style*="--oko-wallpaper-dark:"] .mx_RoomView_timeline > .mx_RoomView_messagePanel {
+    background-color: var(--oko-wallpaper-dark);
+    background-image: url("wallpaper_dark.svg");
+}

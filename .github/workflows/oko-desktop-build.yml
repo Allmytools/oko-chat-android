@@ -85,10 +85,9 @@ jobs:
           pnpm run fetch --cfgdir "$config"
 
           pnpm exec asar extract webapp.asar webapp
-          New-Item webapp/themes/oko -ItemType Directory -Force | Out-Null
           $brand = "$env:GITHUB_WORKSPACE/branding/oko/desktop"
-          Copy-Item "$brand/login", "$brand/home" webapp/themes/oko -Recurse
-          Copy-Item "$brand/icons/icon.ico", "$brand/icons/icon.png" build
+          node "$env:GITHUB_WORKSPACE/desktop/config/brand-webapp.mjs" webapp
+          Copy-Item "$brand/icons/icon.ico", "$brand/icons/icon.png", "$brand/install-spinner.gif" build
           pnpm run asar-webapp
 
       - name: Build unsigned Windows x64 installer
@@ -108,12 +107,14 @@ jobs:
             throw "Unexpected Windows product name '$($app.VersionInfo.ProductName)'"
           }
           pnpm exec asar extract dist/win-unpacked/resources/webapp.asar packaged-web
-          node "$env:GITHUB_WORKSPACE/desktop/config/verify.mjs" packaged-web $config
 
           $installers = @(Get-ChildItem dist -Recurse -File -Filter '*Setup*.exe')
           if ($installers.Count -ne 1 -or $installers[0].Length -eq 0) {
             throw "Expected one nonempty Windows Setup.exe, found $($installers.Count)"
           }
+          $gif = Join-Path $env:RUNNER_TEMP oko-installer-background.gif
+          & "$env:GITHUB_WORKSPACE/desktop/config/extract-installer-gif.ps1" $installers[0].FullName $gif
+          node "$env:GITHUB_WORKSPACE/desktop/config/verify.mjs" packaged-web $config dist/win-unpacked/resources $gif
           New-Item $output -ItemType Directory | Out-Null
           Copy-Item -LiteralPath $installers[0].FullName -Destination $output
           Get-ChildItem $output -Filter '*.exe' | ForEach-Object {
@@ -129,7 +130,6 @@ jobs:
 
       - name: Capture branded login, home and chat
         id: screenshots
-        continue-on-error: true
         working-directory: element-web/apps/desktop
         run: |
           pnpm exec node "$env:GITHUB_WORKSPACE/desktop/screenshots/capture.mjs" packaged-web "$env:RUNNER_TEMP/oko-desktop-screenshots"

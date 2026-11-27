@@ -69,3 +69,12 @@
 - **26.11.2026 18:24 · Codex.** Е3–Е4: перша зелена збірка на `744b1a15` ([запуск](https://github.com/Allmytools/oko-chat-android/actions/runs/45857354077)). Додано сценарій знімків і звіт `docs/oko/zvity/ZVIT_CHA2.md`. Локально перевірено шість знімків 1920×1080 у Chromium з вигаданими даними.
 
 - **26.11.2026 18:29 · Codex · ПЕРЕВІР ЧА2.** `oko-desktop-build` на `a17cdb4c` зелений: інсталятор Windows x64, контрольна сума й шість знімків у [GitHub Actions](https://github.com/Allmytools/oko-chat-android/actions/runs/45858698468). Фінальний коміт додає інструкцію й запис протоколу, а повторний прогін перевіряє його. [PR №2](https://github.com/Allmytools/oko-chat-android/pull/2) — чернетка для інтегратора.
+
+## ЧА3 — значок B5c, GIF інсталятора, шпалери чату (Windows)
+
+- **27.11.2026 16:50 · Інтегратор.** Завдання видано: `docs/oko/zavdannia/CHA3_znachok_B5c_gif_shpalery.md`. Матеріали
+  дизайнера — `ai/oko-dyzain-desktop` `5cbe9e54` (десктоп) і `prozorro-tracker` `ai/oko-chat-dyzain` `2a69f5be` (Android).
+  Шпалери Windows/веб погоджено (🟡) з умовами: лише стрічка, лише теми OKO, CSS підключається під час збирання,
+  workflow падає, якщо селектори зникли. Android — шпалер не робимо (🔴).
+
+- **27.11.2026 16:59 · Codex · ВЗЯВ ЧА3.** Windows: перенесено дизайн з `5cbe9e54`. Шпалери (🟡) обмежені стрічкою та позначкою теми; збірка перевірятиме CSS і результат у Chromium.

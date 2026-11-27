@@ -118,9 +118,13 @@ const browser = await chromium.launch(process.env.OKO_CHROMIUM
     : { channel: "msedge" });
 
 try {
-    for (const [colorScheme, theme, accent] of [
-        ["light", "custom-OKO світла", "#008069"],
-        ["dark", "custom-OKO темна", "#21c063"],
+    for (const [colorScheme, theme, accent, wallpaper] of [
+        ["light", "custom-OKO світла", "#008069", "rgb(244, 240, 233)"],
+        ["dark", "custom-OKO темна", "#21c063", "rgb(16, 19, 23)"],
+        ["light", "light"],
+        ["dark", "dark"],
+        ["light", "light-hc"],
+        ["dark", "dark-hc"],
     ]) {
         const context = await browser.newContext({
             locale: "en-US",
@@ -144,8 +148,10 @@ try {
             await expect(page.getByRole("link", { name: "Create account" })).toHaveCount(0);
             const actualAccent = await page.locator("body").evaluate((body) =>
                 getComputedStyle(body).getPropertyValue("--cpd-color-bg-accent-rest").trim().toLowerCase());
-            assert.equal(actualAccent, accent);
-            await page.screenshot({ path: join(output, "login-" + colorScheme + ".png"), animations: "disabled" });
+            if (wallpaper) {
+                assert.equal(actualAccent, accent);
+                await page.screenshot({ path: join(output, "login-" + colorScheme + ".png"), animations: "disabled" });
+            }
 
             // Use the upstream UI test hook with a synthetic user and intercepted Matrix requests.
             await page.evaluate((hs) => window.mxLoginWithAccessToken(hs, "demo-token"), homeserver);
@@ -162,11 +168,39 @@ try {
             await dismiss.click({ timeout: 1500 }).catch(() => {});
             const verificationNudge = page.getByRole("alert").filter({ hasText: "Verify this device" });
             await verificationNudge.getByRole("button", { name: "Later", exact: true }).click({ timeout: 1500 }).catch(() => {});
-            await page.screenshot({ path: join(output, "home-" + colorScheme + ".png"), animations: "disabled" });
+            if (wallpaper) {
+                await page.screenshot({ path: join(output, "home-" + colorScheme + ".png"), animations: "disabled" });
+            }
 
             await page.evaluate((id) => { location.hash = "/room/" + id; }, roomId);
             await expect(page.getByText(sampleMessage, { exact: true })).toBeVisible({ timeout: 15000 });
-            await page.screenshot({ path: join(output, "chat-" + colorScheme + ".png"), animations: "disabled" });
+            const timeline = page.locator(".mx_RoomView_timeline > .mx_RoomView_messagePanel");
+            await expect(timeline).toHaveCount(1);
+            await expect(timeline).toBeVisible();
+            const imagesIn = (selector) =>
+                page.locator(selector).evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).backgroundImage));
+            for (const selector of [".mx_LeftPanel", ".mx_MessageComposer"]) {
+                const images = await imagesIn(selector);
+                assert.ok(images.length > 0, "Expected Element selector " + selector);
+                assert.ok(images.every((image) => !image.includes("wallpaper_")), "Wallpaper leaked into " + selector);
+            }
+            if (wallpaper) {
+                const image = webOrigin + "/themes/oko/wallpaper_" + colorScheme + ".svg";
+                await expect(timeline).toHaveCSS("background-image", 'url("' + image + '")');
+                await expect(timeline).toHaveCSS("background-color", wallpaper);
+                await expect(timeline).toHaveCSS("background-attachment", "scroll");
+                await timeline.evaluate(async (_element, url) => {
+                    const tile = new Image();
+                    tile.src = url;
+                    await tile.decode();
+                }, image);
+                await page.screenshot({ path: join(output, "chat-" + colorScheme + ".png"), animations: "disabled" });
+            } else {
+                await expect(timeline).toHaveCSS("background-image", "none");
+                if (theme === "light") {
+                    await page.screenshot({ path: join(output, "chat-element-light.png"), animations: "disabled" });
+                }
+            }
         } finally {
             await context.close();
         }
