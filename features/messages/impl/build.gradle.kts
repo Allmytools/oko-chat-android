@@ -28,6 +28,7 @@ setupDependencyInjection()
 dependencies {
     api(projects.features.messages.api)
     implementation(projects.appconfig)
+    implementation(projects.features.okoWallpaper) // OKO: room timeline wallpaper
     implementation(projects.features.call.api)
     implementation(projects.features.enterprise.api)
     implementation(projects.features.forward.api)

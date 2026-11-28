@@ -46,3 +46,13 @@
 | `docs/oko/PROTOKOL.md`, ЧА3 | Статус Android | 🟢 документація | Звірити з `oko-build` |
 | `.github/workflows/oko-build.yml`; `.github/workflows/scripts/{boot-oko-android-emulator.sh,capture-oko-android.py}` | Знімки APK на Android 15, запуск із лаунчера і перевірка системної теми та тематичного значка | 🟢 CI OKO | Артефакт `oko-android-b5c` на push робочої гілки |
 | `docs/oko/zvity/ZVIT_CHA3.md` | Звіт ЧА3 і посилання на артефакти | 🟢 документація OKO | Звірити з обома CI-збірками |
+
+
+## ЧА4 — Android
+
+| Файли | Зміна | Зона | Перевірка |
+|---|---|---|---|
+| `features/oko-wallpaper/` | Телефонний еталон із архіву `efd4ab01`, асинхронне зменшене декодування, нерухомий фон під стрічкою | 🟢 ізольований модуль OKO | Звірити SHA-256 у готових APK, світлий і темний знімки |
+| `features/messages/impl/src/main/kotlin/io/element/android/features/messages/impl/timeline/TimelineView.kt` | Шар 2. Один виклик перед `LazyColumn` у `Box`; лише стрічка кімнати. Element змінював файл 53 рази за рік до `v26.11.1` | 🔴 погоджено о 13:56 | При оновленні перенести виклик перед списком повідомлень; звірити обидві теми й список чатів |
+| `features/messages/impl/build.gradle.kts` | Шар 2. Одна залежність на модуль OKO, 14 змін upstream за той самий рік | 🔴 підтримка погодженого виклику | Зберегти залежність при перенесенні виклику |
+| `.github/workflows/oko-build.yml` | SHA-256 вихідного й упакованого PNG в обох APK | 🟢 збирання OKO | `oko-build`, журнал перевірки APK |

@@ -105,6 +105,7 @@ import io.element.android.libraries.designsystem.theme.components.Text
 import io.element.android.libraries.designsystem.utils.animateScrollToItemCenter
 import io.element.android.libraries.matrix.api.core.EventId
 import io.element.android.libraries.matrix.api.timeline.Timeline
+import io.element.android.oko.wallpaper.OkoTimelineBackground
 import io.element.android.libraries.matrix.api.user.MatrixUser
 import io.element.android.libraries.testtags.TestTag
 import io.element.android.libraries.testtags.TestTags
@@ -211,6 +212,8 @@ fun TimelineView(
         }
         CompositionLocalProvider(LocalTimelineEventRendererConfig provides composeLocalTimelineEventRendererConfig) {
             Box(modifier) {
+                // OKO: Keep the branded wallpaper behind the room timeline.
+                OkoTimelineBackground(enabled = state.timelineMode == Timeline.Mode.Live || state.timelineMode is Timeline.Mode.FocusedOnEvent)
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()

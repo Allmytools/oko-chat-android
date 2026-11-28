@@ -37,6 +37,11 @@ jobs:
         with:
           log-accepted-android-sdk-licenses: 'false'
           packages: 'platforms;android-37.0 build-tools;37.0.0'
+      - name: Verify approved OKO phone wallpaper source
+        if: hashFiles('features/oko-wallpaper/src/main/assets/oko/*.png') != ''
+        run: |
+          printf '%s  %s\n' 'c81ddeee1f1786e92eddf779a72b77bc311c966eea06487e9ca1dd6d08ae4501' \
+            'features/oko-wallpaper/src/main/assets/oko/interatletika_khaos_chystyi_phone_1290x2796.png' | sha256sum --check
       - name: Build F-Droid APKs and run unit tests
         run: |
           ./gradlew -Pelement.enterprise=false "-Poko.test=$OKO_BUILD_TEST" \
@@ -57,6 +62,12 @@ jobs:
             "$tools/aapt" dump badging "${apks[0]}" > "$RUNNER_TEMP/oko-test-badging.txt"
             grep -Eq "^package: name='com\.interatletika\.oko\.test' " "$RUNNER_TEMP/oko-test-badging.txt"
             grep -Fx "application-label:'OKO test'" "$RUNNER_TEMP/oko-test-badging.txt"
+            if [[ -d features/oko-wallpaper ]]; then
+              asset=assets/oko/interatletika_khaos_chystyi_phone_1290x2796.png
+              pixel_sha=$(unzip -p "${apks[0]}" "$asset" | sha256sum)
+              [[ "${pixel_sha%% *}" == c81ddeee1f1786e92eddf779a72b77bc311c966eea06487e9ca1dd6d08ae4501 ]]
+              echo "$abi: SHA-256 of packaged wallpaper ${pixel_sha%% *}"
+            fi
             cp -- "${apks[0]}" "$RUNNER_TEMP/oko-unsigned-apks/oko-test-$abi-unsigned.apk"
           done
       - name: Render or verify OKO screenshots
