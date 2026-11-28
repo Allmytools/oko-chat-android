@@ -3,6 +3,10 @@ import { readdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 export const wallpaperLink = '<link rel="stylesheet" href="themes/oko/oko-wallpaper.css">';
+export const wallpaperFiles = [
+    "interatletika_khaos_chystyi_3840x2160.png",
+    "interatletika_khaos_chystyi_phone_1290x2796.png",
+];
 const selectors = [".mx_RoomView_timeline", ".mx_RoomView_messagePanel"];
 
 export async function checkTimelineSelectors(webapp) {

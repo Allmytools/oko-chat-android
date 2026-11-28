@@ -1,0 +1,59 @@
+name: oko-web
+
+on:
+  push:
+    branches: [ai/oko-desktop]
+  pull_request:
+    branches: [oko/main]
+    paths:
+      - 'desktop/**'
+      - 'branding/oko/desktop/**'
+      - 'branding/oko/wallpaper_khaos/**'
+      - '.github/workflows/oko-wallpaper-verify.yml'
+      - '.github/workflows/oko-web-build.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: oko-web-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  wallpaper:
+    uses: ./.github/workflows/oko-wallpaper-verify.yml
+
+  web:
+    needs: wallpaper
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: oko-verified-wallpapers
+          path: ${{ runner.temp }}/oko-wallpapers
+      - name: Verify Element release and assemble OKO web package
+        run: bash desktop/package-web.sh "$RUNNER_TEMP/oko-web" "$RUNNER_TEMP/oko-wallpapers"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: oko-web
+          path: ${{ runner.temp }}/oko-web/artifacts/
+          if-no-files-found: error
+      - name: Capture OKO web package in Chromium
+        run: |
+          npm install --prefix "$RUNNER_TEMP/oko-playwright" --no-package-lock @playwright/test@1.65.0
+          "$RUNNER_TEMP/oko-playwright/node_modules/.bin/playwright" install --with-deps chromium
+          export OKO_PLAYWRIGHT_DIR="$RUNNER_TEMP/oko-playwright"
+          mkdir "$RUNNER_TEMP/oko-web-checkout"
+          tar -xzf "$RUNNER_TEMP/oko-web/artifacts/"oko-web-*.tar.gz -C "$RUNNER_TEMP/oko-web-checkout"
+          node desktop/screenshots/capture.mjs "$RUNNER_TEMP/oko-web-checkout" "$RUNNER_TEMP/oko-web-screenshots" --web
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always() && !cancelled()
+        with:
+          name: oko-web-screenshots
+          path: ${{ runner.temp }}/oko-web-screenshots/
+          if-no-files-found: warn

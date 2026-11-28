@@ -5,14 +5,14 @@ import { join, resolve } from "node:path";
 import { setTimeout } from "node:timers/promises";
 
 const [webDirectory, output] = process.argv.slice(2);
-const require = createRequire(resolve("package.json"));
+const require = createRequire(resolve(process.env.OKO_PLAYWRIGHT_DIR ?? ".", "package.json"));
 const { chromium, expect } = require("@playwright/test");
 
 const webOrigin = "http://127.0.0.1:8123";
-const homeserver = "https://matrix.example";
-const account = "@demo:matrix.example";
-const otherMember = "@colleague:matrix.example";
-const roomId = "!oko:matrix.example";
+const homeserver = "https://m.pro.ua";
+const account = "@demo:m.pro.ua";
+const otherMember = "@colleague:m.pro.ua";
+const roomId = "!oko:m.pro.ua";
 const roomName = "Тестова кімната OKO";
 const sampleMessage = "Вітаю! Це тестовий чат OKO.";
 
@@ -41,6 +41,7 @@ const state = {
 const messages = [
     matrixEvent(5, "m.room.message", otherMember, { msgtype: "m.text", body: sampleMessage }),
     matrixEvent(6, "m.room.message", account, { msgtype: "m.text", body: "Перевіряю вигляд повідомлень." }),
+    matrixEvent(7, "m.room.member", "@visitor:m.pro.ua", { membership: "join", displayname: "Відвідувач" }, "@visitor:m.pro.ua"),
 ];
 
 async function serveMatrixFixture(route, url) {
@@ -90,6 +91,8 @@ async function serveMatrixFixture(route, url) {
                             timeline: { prev_batch: "before-fixture", limited: false, events: since ? [] : messages },
                             summary: { "m.joined_member_count": 2, "m.invited_member_count": 0 },
                             unread_notifications: { highlight_count: 0, notification_count: 0 },
+                            account_data: { events: [{ type: "m.fully_read", content: { event_id: "$demo5" } }] },
+                            ephemeral: { events: [{ type: "m.receipt", content: { "$demo6": { "m.read": { [otherMember]: { ts: Date.UTC(2026, 10, 26, 9, 0, 7) } } } } }] },
                         },
                     },
                 },
@@ -115,21 +118,26 @@ async function serveFixture(route) {
 await mkdir(output, { recursive: true });
 const browser = await chromium.launch(process.env.OKO_CHROMIUM
     ? { executablePath: process.env.OKO_CHROMIUM }
-    : { channel: "msedge" });
+    : process.platform === "win32" ? { channel: "msedge" } : {});
 
 try {
-    for (const [colorScheme, theme, accent, wallpaper] of [
-        ["light", "custom-OKO світла", "#008069", "rgb(244, 240, 233)"],
+    const themes = [
+        ["light", "custom-OKO світла", "#008069", "rgb(239, 234, 226)"],
         ["dark", "custom-OKO темна", "#21c063", "rgb(16, 19, 23)"],
         ["light", "light"],
         ["dark", "dark"],
         ["light", "light-hc"],
         ["dark", "dark-hc"],
-    ]) {
+    ];
+    const viewports = [{ width: 1440, height: 900 }];
+    if (process.argv.includes("--web")) viewports.push({ width: 480, height: 900 });
+    const cases = viewports.flatMap((viewport) => themes.map((theme) => [viewport, ...theme]));
+    for (const [viewport, colorScheme, theme, accent, background] of cases) {
+        const filename = (screen) => join(output, screen + "-" + viewport.width + "x" + viewport.height + ".png");
         const context = await browser.newContext({
             locale: "en-US",
             colorScheme,
-            viewport: { width: 1920, height: 1080 },
+            viewport,
             serviceWorkers: "block",
         });
         await context.addInitScript(({ theme, webOrigin }) => {
@@ -148,9 +156,11 @@ try {
             await expect(page.getByRole("link", { name: "Create account" })).toHaveCount(0);
             const actualAccent = await page.locator("body").evaluate((body) =>
                 getComputedStyle(body).getPropertyValue("--cpd-color-bg-accent-rest").trim().toLowerCase());
-            if (wallpaper) {
+            if (background) {
                 assert.equal(actualAccent, accent);
-                await page.screenshot({ path: join(output, "login-" + colorScheme + ".png"), animations: "disabled" });
+                const onest = await page.evaluate(async () => (await document.fonts.load('400 14px Onest', "OKO ОКО")).length);
+                assert.ok(onest > 0, "Expected the packaged Onest font");
+                await page.screenshot({ path: filename("login-" + colorScheme), animations: "disabled" });
             }
 
             // Use the upstream UI test hook with a synthetic user and intercepted Matrix requests.
@@ -168,8 +178,8 @@ try {
             await dismiss.click({ timeout: 1500 }).catch(() => {});
             const verificationNudge = page.getByRole("alert").filter({ hasText: "Verify this device" });
             await verificationNudge.getByRole("button", { name: "Later", exact: true }).click({ timeout: 1500 }).catch(() => {});
-            if (wallpaper) {
-                await page.screenshot({ path: join(output, "home-" + colorScheme + ".png"), animations: "disabled" });
+            if (background) {
+                await page.screenshot({ path: filename("home-" + colorScheme), animations: "disabled" });
             }
 
             await page.evaluate((id) => { location.hash = "/room/" + id; }, roomId);
@@ -181,24 +191,39 @@ try {
                 page.locator(selector).evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).backgroundImage));
             for (const selector of [".mx_LeftPanel", ".mx_MessageComposer"]) {
                 const images = await imagesIn(selector);
-                assert.ok(images.length > 0, "Expected Element selector " + selector);
-                assert.ok(images.every((image) => !image.includes("wallpaper_")), "Wallpaper leaked into " + selector);
+                if (viewport.width >= 768) assert.ok(images.length > 0, "Expected Element selector " + selector);
+                assert.ok(images.every((image) => !image.includes("khaos_chystyi")), "Wallpaper leaked into " + selector);
             }
-            if (wallpaper) {
-                const image = webOrigin + "/themes/oko/wallpaper_" + colorScheme + ".svg";
+            if (background) await expect(timeline).toHaveCSS("background-color", background);
+            if (theme === "custom-OKO світла") {
+                const size = viewport.width < viewport.height ? "phone_1290x2796" : "3840x2160";
+                const image = webOrigin + "/themes/oko/wallpaper/interatletika_khaos_chystyi_" + size + ".png";
                 await expect(timeline).toHaveCSS("background-image", 'url("' + image + '")');
-                await expect(timeline).toHaveCSS("background-color", wallpaper);
+                await expect(timeline).toHaveCSS("background-repeat", "no-repeat");
+                await expect(timeline).toHaveCSS("background-size", "cover");
+                await expect(timeline).toHaveCSS("background-position", "50% 50%");
                 await expect(timeline).toHaveCSS("background-attachment", "scroll");
                 await timeline.evaluate(async (_element, url) => {
-                    const tile = new Image();
-                    tile.src = url;
-                    await tile.decode();
+                    const wallpaper = new Image();
+                    wallpaper.src = url;
+                    await wallpaper.decode();
                 }, image);
-                await page.screenshot({ path: join(output, "chat-" + colorScheme + ".png"), animations: "disabled" });
+                const serviceRows = await timeline.locator(
+                    ".mx_MessageTimestamp, .mx_EventTile_timestamp, .mx_TextualEvent, .mx_DateSeparator, " +
+                    ".mx_EventTile_readMarker, .mx_RoomView_myReadMarker, .mx_ReadReceiptMarker",
+                ).evaluateAll((elements) => elements.filter((element) => element.getClientRects().length).map((element) => {
+                    const style = getComputedStyle(element);
+                    return { classes: element.className, foreground: style.color, background: style.backgroundColor };
+                }));
+                console.log("Timeline service styles", viewport.width, JSON.stringify(serviceRows));
+                await page.screenshot({ path: filename("chat-light"), animations: "disabled" });
             } else {
                 await expect(timeline).toHaveCSS("background-image", "none");
-                if (theme === "light") {
-                    await page.screenshot({ path: join(output, "chat-element-light.png"), animations: "disabled" });
+                if (theme === "custom-OKO темна" || theme === "light") {
+                    await page.screenshot({
+                        path: filename(theme === "light" ? "chat-element-light" : "chat-dark"),
+                        animations: "disabled",
+                    });
                 }
             }
         } finally {

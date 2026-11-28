@@ -1,11 +1,28 @@
-/* Element sets these inline properties from the active custom theme and clears
-   them before switching themes. Built-in themes do not define either property. */
+/* Element sets the marker on body for a custom theme and clears it on theme changes. */
 body[style*="--oko-wallpaper-light:"] .mx_RoomView_timeline > .mx_RoomView_messagePanel {
     background-color: var(--oko-wallpaper-light);
-    background-image: url("wallpaper_light.svg");
+    background-image: url("wallpaper/interatletika_khaos_chystyi_3840x2160.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-attachment: scroll;
+}
+
+@media (aspect-ratio < 1/1) {
+    body[style*="--oko-wallpaper-light:"] .mx_RoomView_timeline > .mx_RoomView_messagePanel {
+        background-image: url("wallpaper/interatletika_khaos_chystyi_phone_1290x2796.png");
+    }
 }
 
 body[style*="--oko-wallpaper-dark:"] .mx_RoomView_timeline > .mx_RoomView_messagePanel {
     background-color: var(--oko-wallpaper-dark);
-    background-image: url("wallpaper_dark.svg");
+    background-image: none;
+}
+
+/* The light theme's secondary text (#656D77) is only 4.38:1 on #EFEAE2. */
+body[style*="--oko-wallpaper-light:"] .mx_RoomView_timeline > .mx_RoomView_messagePanel
+    :is(.mx_MessageTimestamp, .mx_EventTile_timestamp, .mx_TextualEvent, .mx_DateSeparator,
+        .mx_EventTile_readMarker, .mx_RoomView_myReadMarker, .mx_ReadReceiptMarker) {
+    color: #1b1d22;
+    background-color: rgb(239 234 226 / 90%);
 }

@@ -8,6 +8,8 @@ on:
     paths:
       - 'desktop/**'
       - 'branding/oko/desktop/**'
+      - 'branding/oko/wallpaper_khaos/**'
+      - '.github/workflows/oko-wallpaper-verify.yml'
       - '.github/workflows/oko-desktop-build.yml'
   workflow_dispatch:
 
@@ -19,7 +21,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  wallpaper:
+    uses: ./.github/workflows/oko-wallpaper-verify.yml
+
   windows:
+    needs: wallpaper
     runs-on: windows-latest
     timeout-minutes: 45
     env:
@@ -34,6 +40,11 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: oko-verified-wallpapers
+          path: ${{ runner.temp }}/oko-wallpapers
 
       - name: Read pinned Element release
         id: element
@@ -86,7 +97,7 @@ jobs:
 
           pnpm exec asar extract webapp.asar webapp
           $brand = "$env:GITHUB_WORKSPACE/branding/oko/desktop"
-          node "$env:GITHUB_WORKSPACE/desktop/config/brand-webapp.mjs" webapp
+          node "$env:GITHUB_WORKSPACE/desktop/config/brand-webapp.mjs" webapp "$env:RUNNER_TEMP/oko-wallpapers"
           Copy-Item "$brand/icons/icon.ico", "$brand/icons/icon.png", "$brand/install-spinner.gif" build
           pnpm run asar-webapp
 
@@ -114,7 +125,8 @@ jobs:
           }
           $gif = Join-Path $env:RUNNER_TEMP oko-installer-background.gif
           & "$env:GITHUB_WORKSPACE/desktop/config/extract-installer-gif.ps1" $installers[0].FullName $gif
-          node "$env:GITHUB_WORKSPACE/desktop/config/verify.mjs" packaged-web $config dist/win-unpacked/resources $gif
+          node "$env:GITHUB_WORKSPACE/desktop/config/verify.mjs" packaged-web $config "$env:RUNNER_TEMP/oko-wallpapers" dist/win-unpacked/resources $gif
+          & "$env:GITHUB_WORKSPACE/desktop/config/verify-windows-icons.ps1" $app.FullName $installers[0].FullName "$env:GITHUB_WORKSPACE/branding/oko/desktop/icons/icon.ico" $gif
           New-Item $output -ItemType Directory | Out-Null
           Copy-Item -LiteralPath $installers[0].FullName -Destination $output
           Get-ChildItem $output -Filter '*.exe' | ForEach-Object {

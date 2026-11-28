@@ -1,0 +1,554 @@
+{
+  "_примітка": "Фрагмент config.json Element Web: setting_defaults.custom_themes + default_theme. ОДНА тема OKO для панелі чату в ОКО і для застосунку OKO на комп'ютері (ЧА2): кольори = ЧА2 без змін, додано шрифт Onest (власник 27.11.2026 20:54). Файли шрифтів — скопіювати з app/static/fonts ОКО (Onest, JetBrains Mono; SIL OFL 1.1, OFL-*.txt поруч) у webapp/themes/oko/fonts/. Простір «Світ» — та сама тема (див. SPECYFIKATSIIA, розділ 7).",
+  "default_theme": "custom-OKO світла",
+  "setting_defaults": {
+    "custom_themes": [
+      {
+        "name": "OKO світла",
+        "is_dark": false,
+        "colors": {
+          "accent-color": "#008069",
+          "primary-color": "#008069",
+          "warning-color": "#D51928",
+          "sidebar-color": "#F0F2F5",
+          "roomlist-background-color": "#FFFFFF",
+          "roomlist-text-color": "#1B1D22",
+          "roomlist-text-secondary-color": "#656D77",
+          "roomlist-highlights-color": "#F0F2F5",
+          "roomlist-separator-color": "#E1E6EC",
+          "timeline-background-color": "#FFFFFF",
+          "timeline-text-color": "#1B1D22",
+          "timeline-text-secondary-color": "#656D77",
+          "timeline-highlights-color": "#F0F2F5",
+          "username-colors": [
+            "#005F00",
+            "#00548C",
+            "#822198",
+            "#5D26CD",
+            "#9F0850",
+            "#9B2200",
+            "#0B5F5A",
+            "#6B4F00"
+          ],
+          "avatar-background-colors": [
+            "#E0F8D9",
+            "#E3F5F8",
+            "#FAEEFB",
+            "#F1EFFF",
+            "#FFECF0",
+            "#FFEFE4",
+            "#DDF3F1",
+            "#FBF1D6"
+          ]
+        },
+        "compound": {
+          "--cpd-color-bg-accent-rest": "#008069",
+          "--cpd-color-bg-accent-hovered": "#00715D",
+          "--cpd-color-bg-accent-pressed": "#006352",
+          "--cpd-color-bg-accent-subtle": "#EEF8F5",
+          "--cpd-color-bg-badge-accent": "#C9EDE4",
+          "--cpd-color-text-badge-accent": "#005C4B",
+          "--cpd-color-border-accent-primary": "#008069",
+          "--cpd-color-border-accent-subtle": "#2FB394",
+          "--cpd-color-gradient-action-stop1": "#8FD6C4",
+          "--cpd-color-gradient-action-stop2": "#2E9E86",
+          "--cpd-color-gradient-action-stop3": "#008069",
+          "--cpd-color-gradient-action-stop4": "#005C4B",
+          "--cpd-color-icon-accent-primary": "#008069",
+          "--cpd-color-icon-accent-tertiary": "#009B7E",
+          "--cpd-color-text-action-accent": "#008069",
+          "--cpd-color-bg-action-primary-rest": "#008069",
+          "--cpd-color-bg-action-primary-hovered": "#00715D",
+          "--cpd-color-bg-action-primary-pressed": "#006352"
+        },
+        "fonts": {
+          "faces": [
+            {
+              "font-family": "Onest",
+              "font-style": "normal",
+              "font-weight": 400,
+              "font-display": "swap",
+              "src": [
+                {
+                  "url": "themes/oko/fonts/onest-cyrillic-400-normal.woff2",
+                  "format": "woff2"
+                }
+              ],
+              "unicode-range": "U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116"
+            },
+            {
+              "font-family": "Onest",
+              "font-style": "normal",
+              "font-weight": 400,
+              "font-display": "swap",
+              "src": [
+                {
+                  "url": "themes/oko/fonts/onest-latin-400-normal.woff2",
+                  "format": "woff2"
+                }
+              ],
+              "unicode-range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD"
+            },
+            {
+              "font-family": "Onest",
+              "font-style": "normal",
+              "font-weight": 400,
+              "font-display": "swap",
+              "src": [
+                {
+                  "url": "themes/oko/fonts/onest-latin-ext-400-normal.woff2",
+                  "format": "woff2"
+                }
+              ],
+              "unicode-range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1E00-1E9F, U+20A0-20AB, U+20AD-20C0, U+2C60-2C7F, U+A720-A7FF"
+            },
+            {
+              "font-family": "Onest",
+              "font-style": "normal",
+              "font-weight": 500,
+              "font-display": "swap",
+              "src": [
+                {
+                  "url": "themes/oko/fonts/onest-cyrillic-500-normal.woff2",
+                  "format": "woff2"
+                }
+              ],
+              "unicode-range": "U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116"
+            },
+            {
+              "font-family": "Onest",
+              "font-style": "normal",
+              "font-weight": 500,
+              "font-display": "swap",
+              "src": [
+                {
+                  "url": "themes/oko/fonts/onest-latin-500-normal.woff2",
+                  "format": "woff2"
+                }
+              ],
+              "unicode-range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD"
+            },
+            {
+              "font-family": "Onest",
+              "font-style": "normal",
+              "font-weight": 500,
+              "font-display": "swap",
+              "src": [
+                {
+                  "url": "themes/oko/fonts/onest-latin-ext-500-normal.woff2",
+                  "format": "woff2"
+                }
+              ],
+              "unicode-range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1E00-1E9F, U+20A0-20AB, U+20AD-20C0, U+2C60-2C7F, U+A720-A7FF"
+            },
+            {
+              "font-family": "Onest",
+              "font-style": "normal",
+              "font-weight": 600,
+              "font-display": "swap",
+              "src": [
+                {
+                  "url": "themes/oko/fonts/onest-cyrillic-600-normal.woff2",
+                  "format": "woff2"
+                }
+              ],
+              "unicode-range": "U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116"
+            },
+            {
+              "font-family": "Onest",
+              "font-style": "normal",
+              "font-weight": 600,
+              "font-display": "swap",
+              "src": [
+                {
+                  "url": "themes/oko/fonts/onest-latin-600-normal.woff2",
+                  "format": "woff2"
+                }
+              ],
+              "unicode-range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD"
+            },
+            {
+              "font-family": "Onest",
+              "font-style": "normal",
+              "font-weight": 600,
+              "font-display": "swap",
+              "src": [
+                {
+                  "url": "themes/oko/fonts/onest-latin-ext-600-normal.woff2",
+                  "format": "woff2"
+                }
+              ],
+              "unicode-range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1E00-1E9F, U+20A0-20AB, U+20AD-20C0, U+2C60-2C7F, U+A720-A7FF"
+            },
+            {
+              "font-family": "Onest",
+              "font-style": "normal",
+              "font-weight": 700,
+              "font-display": "swap",
+              "src": [
+                {
+                  "url": "themes/oko/fonts/onest-cyrillic-700-normal.woff2",
+                  "format": "woff2"
+                }
+              ],
+              "unicode-range": "U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116"
+            },
+            {
+              "font-family": "Onest",
+              "font-style": "normal",
+              "font-weight": 700,
+              "font-display": "swap",
+              "src": [
+                {
+                  "url": "themes/oko/fonts/onest-latin-700-normal.woff2",
+                  "format": "woff2"
+                }
+              ],
+              "unicode-range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD"
+            },
+            {
+              "font-family": "Onest",
+              "font-style": "normal",
+              "font-weight": 700,
+              "font-display": "swap",
+              "src": [
+                {
+                  "url": "themes/oko/fonts/onest-latin-ext-700-normal.woff2",
+                  "format": "woff2"
+                }
+              ],
+              "unicode-range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1E00-1E9F, U+20A0-20AB, U+20AD-20C0, U+2C60-2C7F, U+A720-A7FF"
+            },
+            {
+              "font-family": "JetBrains Mono",
+              "font-style": "normal",
+              "font-weight": 400,
+              "font-display": "swap",
+              "src": [
+                {
+                  "url": "themes/oko/fonts/jetbrains-mono-cyrillic-400-normal.woff2",
+                  "format": "woff2"
+                }
+              ],
+              "unicode-range": "U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116"
+            },
+            {
+              "font-family": "JetBrains Mono",
+              "font-style": "normal",
+              "font-weight": 400,
+              "font-display": "swap",
+              "src": [
+                {
+                  "url": "themes/oko/fonts/jetbrains-mono-latin-400-normal.woff2",
+                  "format": "woff2"
+                }
+              ],
+              "unicode-range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD"
+            },
+            {
+              "font-family": "JetBrains Mono",
+              "font-style": "normal",
+              "font-weight": 700,
+              "font-display": "swap",
+              "src": [
+                {
+                  "url": "themes/oko/fonts/jetbrains-mono-cyrillic-700-normal.woff2",
+                  "format": "woff2"
+                }
+              ],
+              "unicode-range": "U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116"
+            },
+            {
+              "font-family": "JetBrains Mono",
+              "font-style": "normal",
+              "font-weight": 700,
+              "font-display": "swap",
+              "src": [
+                {
+                  "url": "themes/oko/fonts/jetbrains-mono-latin-700-normal.woff2",
+                  "format": "woff2"
+                }
+              ],
+              "unicode-range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD"
+            }
+          ],
+          "general": "Onest, Inter, \"Segoe UI\", Roboto, Arial, sans-serif",
+          "monospace": "\"JetBrains Mono\", Consolas, \"Courier New\", monospace"
+        }
+      },
+      {
+        "name": "OKO темна",
+        "is_dark": true,
+        "colors": {
+          "accent-color": "#21C063",
+          "primary-color": "#21C063",
+          "warning-color": "#FD3E3C",
+          "sidebar-color": "#1D1F24",
+          "roomlist-background-color": "#101317",
+          "roomlist-text-color": "#EBEEF2",
+          "roomlist-text-secondary-color": "#808994",
+          "roomlist-highlights-color": "#1D1F24",
+          "roomlist-separator-color": "#26282D",
+          "timeline-background-color": "#101317",
+          "timeline-text-color": "#EBEEF2",
+          "timeline-text-secondary-color": "#808994",
+          "timeline-highlights-color": "#1D1F24",
+          "username-colors": [
+            "#56C02C",
+            "#21BACD",
+            "#D991DE",
+            "#AD9CFE",
+            "#FE84A2",
+            "#F6913D",
+            "#3FC4B4",
+            "#D6B11E"
+          ],
+          "avatar-background-colors": [
+            "#002600",
+            "#001B4E",
+            "#37004E",
+            "#22006A",
+            "#450018",
+            "#470000",
+            "#00302B",
+            "#3A2C00"
+          ]
+        },
+        "compound": {
+          "--cpd-color-bg-accent-rest": "#21C063",
+          "--cpd-color-bg-accent-hovered": "#3CCB78",
+          "--cpd-color-bg-accent-pressed": "#5BD48D",
+          "--cpd-color-bg-accent-subtle": "#04200F",
+          "--cpd-color-bg-badge-accent": "#0F3A22",
+          "--cpd-color-text-badge-accent": "#5BD48D",
+          "--cpd-color-border-accent-primary": "#21C063",
+          "--cpd-color-border-accent-subtle": "#146B3A",
+          "--cpd-color-gradient-action-stop1": "#5BD48D",
+          "--cpd-color-gradient-action-stop2": "#21C063",
+          "--cpd-color-gradient-action-stop3": "#168A46",
+          "--cpd-color-gradient-action-stop4": "#0B4A26",
+          "--cpd-color-icon-accent-primary": "#21C063",
+          "--cpd-color-icon-accent-tertiary": "#1A9A4F",
+          "--cpd-color-text-action-accent": "#21C063",
+          "--cpd-color-bg-action-primary-rest": "#21C063",
+          "--cpd-color-bg-action-primary-hovered": "#3CCB78",
+          "--cpd-color-bg-action-primary-pressed": "#5BD48D"
+        },
+        "fonts": {
+          "faces": [
+            {
+              "font-family": "Onest",
+              "font-style": "normal",
+              "font-weight": 400,
+              "font-display": "swap",
+              "src": [
+                {
+                  "url": "themes/oko/fonts/onest-cyrillic-400-normal.woff2",
+                  "format": "woff2"
+                }
+              ],
+              "unicode-range": "U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116"
+            },
+            {
+              "font-family": "Onest",
+              "font-style": "normal",
+              "font-weight": 400,
+              "font-display": "swap",
+              "src": [
+                {
+                  "url": "themes/oko/fonts/onest-latin-400-normal.woff2",
+                  "format": "woff2"
+                }
+              ],
+              "unicode-range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD"
+            },
+            {
+              "font-family": "Onest",
+              "font-style": "normal",
+              "font-weight": 400,
+              "font-display": "swap",
+              "src": [
+                {
+                  "url": "themes/oko/fonts/onest-latin-ext-400-normal.woff2",
+                  "format": "woff2"
+                }
+              ],
+              "unicode-range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1E00-1E9F, U+20A0-20AB, U+20AD-20C0, U+2C60-2C7F, U+A720-A7FF"
+            },
+            {
+              "font-family": "Onest",
+              "font-style": "normal",
+              "font-weight": 500,
+              "font-display": "swap",
+              "src": [
+                {
+                  "url": "themes/oko/fonts/onest-cyrillic-500-normal.woff2",
+                  "format": "woff2"
+                }
+              ],
+              "unicode-range": "U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116"
+            },
+            {
+              "font-family": "Onest",
+              "font-style": "normal",
+              "font-weight": 500,
+              "font-display": "swap",
+              "src": [
+                {
+                  "url": "themes/oko/fonts/onest-latin-500-normal.woff2",
+                  "format": "woff2"
+                }
+              ],
+              "unicode-range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD"
+            },
+            {
+              "font-family": "Onest",
+              "font-style": "normal",
+              "font-weight": 500,
+              "font-display": "swap",
+              "src": [
+                {
+                  "url": "themes/oko/fonts/onest-latin-ext-500-normal.woff2",
+                  "format": "woff2"
+                }
+              ],
+              "unicode-range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1E00-1E9F, U+20A0-20AB, U+20AD-20C0, U+2C60-2C7F, U+A720-A7FF"
+            },
+            {
+              "font-family": "Onest",
+              "font-style": "normal",
+              "font-weight": 600,
+              "font-display": "swap",
+              "src": [
+                {
+                  "url": "themes/oko/fonts/onest-cyrillic-600-normal.woff2",
+                  "format": "woff2"
+                }
+              ],
+              "unicode-range": "U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116"
+            },
+            {
+              "font-family": "Onest",
+              "font-style": "normal",
+              "font-weight": 600,
+              "font-display": "swap",
+              "src": [
+                {
+                  "url": "themes/oko/fonts/onest-latin-600-normal.woff2",
+                  "format": "woff2"
+                }
+              ],
+              "unicode-range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD"
+            },
+            {
+              "font-family": "Onest",
+              "font-style": "normal",
+              "font-weight": 600,
+              "font-display": "swap",
+              "src": [
+                {
+                  "url": "themes/oko/fonts/onest-latin-ext-600-normal.woff2",
+                  "format": "woff2"
+                }
+              ],
+              "unicode-range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1E00-1E9F, U+20A0-20AB, U+20AD-20C0, U+2C60-2C7F, U+A720-A7FF"
+            },
+            {
+              "font-family": "Onest",
+              "font-style": "normal",
+              "font-weight": 700,
+              "font-display": "swap",
+              "src": [
+                {
+                  "url": "themes/oko/fonts/onest-cyrillic-700-normal.woff2",
+                  "format": "woff2"
+                }
+              ],
+              "unicode-range": "U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116"
+            },
+            {
+              "font-family": "Onest",
+              "font-style": "normal",
+              "font-weight": 700,
+              "font-display": "swap",
+              "src": [
+                {
+                  "url": "themes/oko/fonts/onest-latin-700-normal.woff2",
+                  "format": "woff2"
+                }
+              ],
+              "unicode-range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD"
+            },
+            {
+              "font-family": "Onest",
+              "font-style": "normal",
+              "font-weight": 700,
+              "font-display": "swap",
+              "src": [
+                {
+                  "url": "themes/oko/fonts/onest-latin-ext-700-normal.woff2",
+                  "format": "woff2"
+                }
+              ],
+              "unicode-range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1E00-1E9F, U+20A0-20AB, U+20AD-20C0, U+2C60-2C7F, U+A720-A7FF"
+            },
+            {
+              "font-family": "JetBrains Mono",
+              "font-style": "normal",
+              "font-weight": 400,
+              "font-display": "swap",
+              "src": [
+                {
+                  "url": "themes/oko/fonts/jetbrains-mono-cyrillic-400-normal.woff2",
+                  "format": "woff2"
+                }
+              ],
+              "unicode-range": "U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116"
+            },
+            {
+              "font-family": "JetBrains Mono",
+              "font-style": "normal",
+              "font-weight": 400,
+              "font-display": "swap",
+              "src": [
+                {
+                  "url": "themes/oko/fonts/jetbrains-mono-latin-400-normal.woff2",
+                  "format": "woff2"
+                }
+              ],
+              "unicode-range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD"
+            },
+            {
+              "font-family": "JetBrains Mono",
+              "font-style": "normal",
+              "font-weight": 700,
+              "font-display": "swap",
+              "src": [
+                {
+                  "url": "themes/oko/fonts/jetbrains-mono-cyrillic-700-normal.woff2",
+                  "format": "woff2"
+                }
+              ],
+              "unicode-range": "U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116"
+            },
+            {
+              "font-family": "JetBrains Mono",
+              "font-style": "normal",
+              "font-weight": 700,
+              "font-display": "swap",
+              "src": [
+                {
+                  "url": "themes/oko/fonts/jetbrains-mono-latin-700-normal.woff2",
+                  "format": "woff2"
+                }
+              ],
+              "unicode-range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD"
+            }
+          ],
+          "general": "Onest, Inter, \"Segoe UI\", Roboto, Arial, sans-serif",
+          "monospace": "\"JetBrains Mono\", Consolas, \"Courier New\", monospace"
+        }
+      }
+    ]
+  }
+}

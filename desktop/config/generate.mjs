@@ -1,37 +1,37 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
-const output = process.argv[2];
+const [output] = process.argv.slice(2);
 if (!output) {
     throw new Error("Usage: node desktop/config/generate.mjs <output-directory>");
 }
 
-const brandDirectory = new URL("../../branding/oko/desktop/", import.meta.url);
-const readBrandJson = async (name) =>
-    JSON.parse(await readFile(new URL(name, brandDirectory), "utf8"));
-
-const [{ brand, branding, embedded_pages, default_theme, setting_defaults }, light, dark] =
-    await Promise.all([
-        readBrandJson("config_branding.json"),
-        readBrandJson("theme_oko_light.json"),
-        readBrandJson("theme_oko_dark.json"),
-    ]);
+const readJson = async (path) => JSON.parse(await readFile(new URL(path, import.meta.url), "utf8"));
+const [brand, theme, { setting_defaults: panelDefaults, ...policy }] = await Promise.all([
+    readJson("../../branding/oko/desktop/config_branding.json"),
+    readJson("./oko_element_themes.json"),
+    readJson("./oko-panel-settings.json"),
+]);
 
 const config = {
-    brand,
-    branding,
-    embedded_pages,
-    default_theme,
+    ...policy,
+    brand: brand.brand,
+    branding: brand.branding,
+    embedded_pages: brand.embedded_pages,
+    default_theme: theme.default_theme,
     setting_defaults: {
-        ...setting_defaults,
-        custom_themes: [light, dark],
-        "UIFeature.registration": false,
+        ...panelDefaults,
+        ...theme.setting_defaults,
+        custom_themes: theme.setting_defaults.custom_themes.map((entry) => ({
+            ...entry,
+            colors: {
+                ...entry.colors,
+                ...(entry.is_dark ? { "oko-wallpaper-dark": "#101317" } : { "oko-wallpaper-light": "#EFEAE2" }),
+            },
+        })),
     },
-    disable_custom_urls: false,
-    disable_guests: true,
-    // Placeholder. Enter the intended Matrix homeserver on the sign-in screen.
     default_server_config: {
-        "m.homeserver": { base_url: "https://matrix.example" },
+        "m.homeserver": { base_url: "https://m.pro.ua", server_name: "m.pro.ua" },
     },
 };
 

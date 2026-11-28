@@ -1,0 +1,35 @@
+{
+  "disable_custom_urls": true,
+  "disable_3pid_login": true,
+  "disable_guests": true,
+  "force_verification": true,
+  "show_labs_settings": false,
+  "element_call": {
+    "disable": true,
+    "use_exclusively": false
+  },
+  "integrations_ui_url": "",
+  "integrations_rest_url": "",
+  "integrations_widgets_urls": [],
+  "room_directory": {
+    "servers": []
+  },
+  "setting_defaults": {
+    "layout": "bubble",
+    "UIFeature.voip": false,
+    "UIFeature.widgets": false,
+    "UIFeature.registration": false,
+    "UIFeature.passwordReset": false,
+    "UIFeature.deactivate": false,
+    "UIFeature.feedback": false,
+    "UIFeature.shareSocial": false,
+    "UIFeature.shareQrCode": false,
+    "UIFeature.thirdPartyId": false,
+    "UIFeature.identityServer": false,
+    "UIFeature.allowCreatingPublicRooms": false,
+    "UIFeature.allowCreatingPublicSpaces": false,
+    "UIFeature.locationSharing": false,
+    "UIFeature.urlPreviews": false,
+    "UIFeature.advancedSettings": false
+  }
+}

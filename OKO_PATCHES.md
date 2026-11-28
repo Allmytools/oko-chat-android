@@ -30,3 +30,7 @@
 | Файли | Зміна | Зона | Перевірка |
 |---|---|---|---|
 | `branding/oko/wallpaper_khaos/`, `.github/workflows/oko-wallpaper-verify.yml` | Оригінальний архів, контрольні суми та відтворення на Ubuntu 24.04 | 🟢 збирання OKO | SHA-256, побайтова рівність SVG, попіксельна рівність PNG |
+| `desktop/config/`, `branding/oko/desktop/wallpaper/oko-wallpaper.css` | Спільна тема ПЧ1 і Onest, палітра й позначки OKO, два PNG лише за світлою стрічкою | 🟡 погоджено в ЧА4 | Звірити знімки 480×900 і 1440×900, обидві теми OKO й вбудовану тему |
+| `desktop/package-web.sh`, `.github/workflows/oko-web-build.yml`, `docs/oko/ROZHORTANNIA_WEB.md` | Перевірка підпису Element, вебпакет із SHA-256, знімки Chromium | 🟢 збирання ОКО | `oko-web` та `oko-web-screenshots` |
+| `.github/workflows/oko-desktop-build.yml`, `desktop/config/verify-windows-icons.ps1` | Перевірені PNG та B5c з виконуваних файлів, 48 кадрів GIF із `Setup.exe` | 🟢 збирання ОКО | Журнал `oko-desktop-build` і артефакт Windows |
+| `desktop/screenshots/capture.mjs` | Перевірки шпалер, шрифтів і кольорів службових рядків у зібраних пакетах | 🟢 тести ОКО | Знімки артефактів та журнал Chromium |
