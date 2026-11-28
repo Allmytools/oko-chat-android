@@ -23,3 +23,10 @@
 | `desktop/config/extract-installer-gif.ps1`, `.github/workflows/oko-desktop-build.yml`, `desktop/screenshots/capture.mjs` | Інсталятор, звірка вкладеного GIF і перевірка всіх тем | 🟢 збирання й тести OKO | Зелений `oko-desktop-build` і сім PNG |
 | `docs/oko/PROTOKOL.md`, ЧА3 | Статус Windows | 🟢 документація | Звірити з `oko-desktop-build` |
 | `docs/oko/zvity/ZVIT_CHA3.md` | Звіт ЧА3 і посилання на артефакти | 🟢 документація OKO | Звірити з обома CI-збірками |
+
+
+## ЧА4 — перевірка шпалер
+
+| Файли | Зміна | Зона | Перевірка |
+|---|---|---|---|
+| `branding/oko/wallpaper_khaos/`, `.github/workflows/oko-wallpaper-verify.yml` | Оригінальний архів, контрольні суми та відтворення на Ubuntu 24.04 | 🟢 збирання OKO | SHA-256, побайтова рівність SVG, попіксельна рівність PNG |
