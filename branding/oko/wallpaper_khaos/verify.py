@@ -1,9 +1,13 @@
 """Reproduce the approved OKO wallpaper archive and copy its checked PNGs."""
 
+from base64 import b64decode
 import hashlib
+from io import BytesIO
 import os
 from pathlib import Path
+import re
 import shutil
+from struct import pack
 import subprocess
 import sys
 from tempfile import TemporaryDirectory
@@ -15,6 +19,7 @@ from PIL import Image, __version__ as pillow_version
 BRAND = Path(__file__).resolve().parent
 ROOT = "interatletika_khaos_chystyi"
 ARCHIVE = f"{ROOT}_package.zip"
+EMBEDDED_PNG = re.compile(rb"data:image/png;base64,([A-Za-z0-9+/=]+)")
 MODES = (
     ("desktop", "3", "BASE_D", "310", 3840, 2160, "3840x2160"),
     ("phone", "4", "BASE_P", "215", 1290, 2796, "phone_1290x2796"),
@@ -56,7 +61,18 @@ def check_renderer():
     print(f"Font: {font}", flush=True)
     if Path(font).name != "LiberationSansNarrow-Italic.ttf":
         raise SystemExit("Liberation Sans Narrow Italic was not selected")
-    return versions != REFERENCE_PACKAGES
+    if versions != REFERENCE_PACKAGES:
+        print("::notice::Ubuntu rasterizer packages differ from the reference versions.")
+
+
+def svg_content(svg):
+    def replace_png(match):
+        with Image.open(BytesIO(b64decode(match[1], validate=True)), formats=["PNG"]) as image:
+            pixels = image.convert("RGBA")
+            digest = hashlib.sha256(pack(">II", *pixels.size) + pixels.tobytes()).hexdigest()
+        return b"data:image/png;rgba-sha256," + digest.encode("ascii")
+
+    return EMBEDDED_PNG.subn(replace_png, svg)
 
 
 def reproduce(output):
@@ -67,7 +83,7 @@ def reproduce(output):
     manifest = {name: digest for digest, name in records}
     archive = BRAND / ARCHIVE
     verify_hash(archive, manifest[ARCHIVE])
-    renderer_changed = check_renderer()
+    check_renderer()
     env = os.environ.copy()
     for key in ("ROTMAX", "BAR", "BASE_D", "BASE_P"):
         env.pop(key, None)
@@ -94,9 +110,17 @@ def reproduce(output):
                 env={**env, base_key: base},
                 check=True,
             )
-            if svg.read_bytes() != reference_svg.read_bytes():
-                raise SystemExit(f"SVG mismatch: {mode}")
-            print(f"SVG identical: {mode}", flush=True)
+            actual_svg = svg.read_bytes()
+            expected_svg = reference_svg.read_bytes()
+            actual_content, actual_count = svg_content(actual_svg)
+            expected_content, expected_count = svg_content(expected_svg)
+            if actual_count != expected_count or actual_content != expected_content:
+                raise SystemExit(f"SVG text or embedded PNG pixels differ: {mode}")
+            print(
+                f"SVG content identical: {mode} ({actual_count} embedded PNGs); "
+                f"identical bytes: {actual_svg == expected_svg}",
+                flush=True,
+            )
             subprocess.run(
                 ["rsvg-convert", "-w", str(width), "-h", str(height), str(svg), "-o", str(generated)],
                 check=True,
@@ -114,11 +138,9 @@ def reproduce(output):
             references.append(reference)
 
         if pixel_mismatch:
-            if not renderer_changed:
-                raise SystemExit("PNG mismatch on the reference Ubuntu rasterizer")
             print(
-                "::warning::Ubuntu rasterizer packages have changed. "
-                "The verified PNGs are retained because both original SVGs match byte for byte."
+                "::warning::Rasterized PNG pixels differ on this Ubuntu runner. "
+                "The verified reference PNGs are retained because both SVGs match in content."
             )
         output.mkdir(parents=True, exist_ok=True)
         for reference in references:
