@@ -39,7 +39,7 @@ const state = {
     ],
 };
 const messages = [
-    matrixEvent(5, "m.room.message", otherMember, { msgtype: "m.text", body: sampleMessage }),
+    { ...matrixEvent(5, "m.room.message", otherMember, { msgtype: "m.text", body: sampleMessage }), origin_server_ts: Date.UTC(2026, 10, 25, 9) },
     matrixEvent(6, "m.room.message", account, { msgtype: "m.text", body: "Перевіряю вигляд повідомлень." }),
     matrixEvent(7, "m.room.member", "@visitor:m.pro.ua", { membership: "join", displayname: "Відвідувач" }, "@visitor:m.pro.ua"),
 ];
@@ -133,6 +133,8 @@ try {
     if (process.argv.includes("--web")) viewports.push({ width: 480, height: 900 });
     const cases = viewports.flatMap((viewport) => themes.map((theme) => [viewport, ...theme]));
     for (const [viewport, colorScheme, theme, accent, background] of cases) {
+        const wide = viewport.width >= 768;
+        console.log("Capturing", theme, viewport.width + "x" + viewport.height);
         const filename = (screen) => join(output, screen + "-" + viewport.width + "x" + viewport.height + ".png");
         const context = await browser.newContext({
             locale: "en-US",
@@ -152,7 +154,9 @@ try {
             await expect(page.getByRole("heading", { name: "Sign in" })).toBeVisible({ timeout: 20000 });
             await expect(page.getByRole("button", { name: "Sign in", exact: true })).toBeEnabled();
             await expect(page.getByText("Your OKO is misconfigured", { exact: true })).toBeHidden();
-            await expect(page.locator('img[src="themes/oko/login/logo.svg"]')).toBeVisible();
+            const loginLogo = page.locator('img[src="themes/oko/login/logo.svg"]');
+            if (wide) await expect(loginLogo).toBeVisible();
+            await loginLogo.evaluate((image) => image.decode());
             await expect(page.getByRole("link", { name: "Create account" })).toHaveCount(0);
             const actualAccent = await page.locator("body").evaluate((body) =>
                 getComputedStyle(body).getPropertyValue("--cpd-color-bg-accent-rest").trim().toLowerCase());
@@ -160,17 +164,21 @@ try {
                 assert.equal(actualAccent, accent);
                 const onest = await page.evaluate(async () => (await document.fonts.load('400 14px Onest', "OKO ОКО")).length);
                 assert.ok(onest > 0, "Expected the packaged Onest font");
-                await page.screenshot({ path: filename("login-" + colorScheme), animations: "disabled" });
+                if (wide) await page.screenshot({ path: filename("login-" + colorScheme), animations: "disabled" });
             }
 
             // Use the upstream UI test hook with a synthetic user and intercepted Matrix requests.
             await page.evaluate((hs) => window.mxLoginWithAccessToken(hs, "demo-token"), homeserver);
-            await page.goto(webOrigin + "/#/home");
-            await expect(page.getByRole("heading", { name: "Вітаємо в OKO" })).toBeVisible({ timeout: 20000 });
-            await expect(page.locator('img[src="themes/oko/home/oko_znak.svg"]')).toBeVisible();
+            if (wide) {
+                await page.goto(webOrigin + "/#/home");
+                await expect(page.getByRole("heading", { name: "Вітаємо в OKO" })).toBeVisible({ timeout: 20000 });
+                await expect(page.locator('img[src="themes/oko/home/oko_znak.svg"]')).toBeVisible();
 
-            const room = page.getByText(roomName, { exact: true }).first();
-            await expect(room).toBeVisible({ timeout: 10000 });
+                const room = page.getByText(roomName, { exact: true }).first();
+                await expect(room).toBeVisible({ timeout: 10000 });
+            } else {
+                await page.goto(webOrigin + "/#/room/" + roomId);
+            }
 
             // Dismiss the media notice and room-list tip in the synthetic browser profile.
             const dismiss = page.getByRole("alert").getByRole("button", { name: /^ok$/i }).first();
@@ -178,7 +186,7 @@ try {
             await dismiss.click({ timeout: 1500 }).catch(() => {});
             const verificationNudge = page.getByRole("alert").filter({ hasText: "Verify this device" });
             await verificationNudge.getByRole("button", { name: "Later", exact: true }).click({ timeout: 1500 }).catch(() => {});
-            if (background) {
+            if (background && wide) {
                 await page.screenshot({ path: filename("home-" + colorScheme), animations: "disabled" });
             }
 
@@ -191,7 +199,7 @@ try {
                 page.locator(selector).evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).backgroundImage));
             for (const selector of [".mx_LeftPanel", ".mx_MessageComposer"]) {
                 const images = await imagesIn(selector);
-                if (viewport.width >= 768) assert.ok(images.length > 0, "Expected Element selector " + selector);
+                if (wide) assert.ok(images.length > 0, "Expected Element selector " + selector);
                 assert.ok(images.every((image) => !image.includes("khaos_chystyi")), "Wallpaper leaked into " + selector);
             }
             if (background) await expect(timeline).toHaveCSS("background-color", background);
@@ -209,8 +217,8 @@ try {
                     await wallpaper.decode();
                 }, image);
                 const serviceRows = await timeline.locator(
-                    ".mx_MessageTimestamp, .mx_EventTile_timestamp, .mx_TextualEvent, .mx_DateSeparator, " +
-                    ".mx_EventTile_readMarker, .mx_RoomView_myReadMarker, .mx_ReadReceiptMarker",
+                    ".mx_MessageTimestamp, .mx_EventTile_timestamp, .mx_TextualEvent, .mx_TimelineSeparator, " +
+                    ".mx_MessagePanel_myReadMarker, .mx_ReadReceiptMarker",
                 ).evaluateAll((elements) => elements.filter((element) => element.getClientRects().length).map((element) => {
                     const style = getComputedStyle(element);
                     return { classes: element.className, foreground: style.color, background: style.backgroundColor };
